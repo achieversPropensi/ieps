@@ -101,4 +101,10 @@ public class UserRestController {
             }
         }
     }
+
+    @PostMapping(value = "/check-user")
+    public String checkUser(@RequestBody String token){
+        return userService.checkUser(token);
+    }
+
 }
