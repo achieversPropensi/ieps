@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+  <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+    * {
+      font-family: "Poppins", sans-serif;
+    }
+
+    /* Split the screen in half */
+    .split {
+      height: 100%;
+      width: 50%;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      overflow-x: hidden;
+      padding-top: 20px;
+    }
+
+    /* Control the left side */
+    .left {
+      left: 0;
+      background-color: grey;
+      background-image: url('https://github.com/pudhiil/cobacoba/assets/94066150/b7cf0c25-09db-4a3f-9f92-27b448acf64b');
+      background-size: cover;
+      /* Menyesuaikan ukuran gambar dengan proporsi */
+      background-position: center;
+      /* Menempatkan gambar di tengah */
+    }
+
+    /* Control the right side */
+    .right {
+      right: 0;
+    }
+
+    /* If you want the content centered horizontally and vertically */
+    .centered {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Style for the submit button */
+    .form-group a {
+      width: 100%;
+      text-align: center;
+    }
+
+    /* Style for the button inside the form-group */
+    .form-group button {
+      width: 100%;
+    }
+
+    /* Style for the "Belum punya akun?" text */
+    .registration-text {
+      text-align: center;
+    }
+  </style>
+  <title>Home</title>
+</head>
+
+<body>
+<div class="split left">
+</div>
+<div class="split right">
+  <div class="container">
+    <h2 style="margin-top: 20px;">Registrasi</h2>
+    <p>
+      Buat akun vendor agar dapat masuk ke <b>Integrated E-Procurement System</b>.
+    </p>
+    <div class="alert alert-danger" th:if="${error}" th:each="errorMessage : ${error}" th:text="${errorMessage}">
+    </div>
+    <form th:action="@{/register}" th:object="${vendorDTO}" method="POST" id="registrationForm">
+      <input type="hidden" th:field="*{role}" th:value="'Vendor'" />
+      <div class="col">
+        <div class="row-md-2">
+          <div class="form-content">
+            <div class="form-group">
+              <label><b>Nama Lengkap</b><span style="color: red;">*</span></label>
+              <input type="text" class="form-control" placeholder="Masukkan nama lengkap Anda" th:field="*{nama}"
+                     required />
+            </div>
+            <br>
+            <div class="form-group">
+              <label><b>Email</b><span style="color: red;">*</span></label>
+              <input type="text" class="form-control" placeholder="Masukkan nama Anda" th:field="*{email}" required />
+            </div>
+            <br>
+            <div class="form-group">
+              <label><b>Telepon</b><span style="color: red;">*</span></label>
+              <input type="text" class="form-control" placeholder="Masukkan nomor telepon Anda"
+                     th:field="*{nomorTelefon}" required />
+            </div>
+            <br>
+            <div class="form-group">
+              <label><b>Nama Perusahaan</b><span style="color: red;">*</span></label>
+              <input type="text" class="form-control" placeholder="Masukkan nama perusahaan Anda"
+                     th:field="*{namaPerusahaan}" required />
+            </div>
+            <br>
+            <div class="form-group">
+              <label><b>Alamat Perusahaan</b><span style="color: red;">*</span></label>
+              <input type="text" class="form-control" placeholder="Masukkan alamat perusahaan Anda"
+                     th:field="*{alamat}" required />
+            </div>
+            <br>
+            <div class="form-group">
+              <label><b>Password</b><span style="color: red;">*</span></label>
+              <input type="password" class="form-control" placeholder="Masukkan password Anda" th:field="*{password}"
+                     required />
+            </div>
+            <br>
+            <div class="form-group submit-btn">
+              <button type="button" id="showModalBtn" class="btn btn-dark">
+                Submit
+              </button>
+            </div>
+            <br>
+            <br>
+            <div class="form-group registration-text">
+              <p>Sudah punya akun?</p>
+            </div>
+            <div class="form-group justify-content-center">
+              <a type="button" th:href="@{/login-form}" class="btn btn-light btn-outline-dark">
+                Login
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal" id="confirmationModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Submit</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Apakah Anda yakin ingin submit?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          Tidak
+        </button>
+        <button type="button" class="btn btn-primary" id="confirmSubmitBtn">
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document
+    .getElementById("showModalBtn")
+    .addEventListener("click", function () {
+      var modal = new bootstrap.Modal(
+        document.getElementById("confirmationModal")
+      );
+      modal.show();
+    });
+
+  document
+    .getElementById("confirmSubmitBtn")
+    .addEventListener("click", function () {
+      document.getElementById("registrationForm").submit();
+    });
+</script>
+</body>
+
+</html>

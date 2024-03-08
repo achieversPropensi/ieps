@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        * {
+            font-family: "Poppins", sans-serif;
+        }
+
+        /* Split the screen in half */
+        .split {
+            height: 100%;
+            width: 50%;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+
+        /* Control the left side */
+        .left {
+            left: 0;
+            background-color: grey;
+            background-image: url('https://github.com/pudhiil/cobacoba/assets/94066150/970cf6f8-67c2-48d8-9330-3af010c3c4e2');
+            background-size: cover;
+            /* Menyesuaikan ukuran gambar dengan proporsi */
+            background-position: center;
+            /* Menempatkan gambar di tengah */
+        }
+
+        /* Control the right side */
+        .right {
+            right: 0;
+        }
+
+        /* If you want the content centered horizontally and vertically */
+        .centered {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Style for the submit button */
+        .form-group a {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Style for the button inside the form-group */
+        .form-group button {
+            width: 100%;
+        }
+
+        /* Style for the "Belum punya akun?" text */
+        .registration-text {
+            text-align: center;
+        }
+    </style>
+    <title>Home</title>
+</head>
+
+<body>
+<div class="split left">
+</div>
+<div class="split right">
+    <div class="container">
+        <h2 style="margin-top: 210px;">Masuk</h2>
+        <p>Selamat datang! Silahkan Masuk ke <b>Truba Jaga Cita Integrated E-Procurement System</b>.</p>
+        <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+        <form th:action="@{/login}" th:object="${loginDTO}" method="POST">
+            <div class="col">
+                <div class="row-md-2">
+                    <div class="form-content">
+                        <div class="form-group">
+                            <label><b>Email</b></label>
+                            <input type="text" class="form-control" placeholder="Masukkan email Anda"
+                                   th:field="*{email}" required />
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <label><b>Password</b></label>
+                            <input type="password" class="form-control" placeholder="Masukkan password Anda"
+                                   th:field="*{password}" required />
+                        </div>
+                        <br>
+                        <div class="form-group submit-btn">
+                            <button type="submit" class="btn btn-dark">
+                                Submit
+                            </button>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="form-group registration-text">
+                            <p>Belum punya akun?</p>
+                        </div>
+                        <div class="form-group justify-content-center">
+                            <a type="button" th:href="@{/register}" class="btn btn-light btn-outline-dark">
+                                Registrasi sebagai Vendor
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

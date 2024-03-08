@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Navbar Vendor</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../static/css/style-navbar.css" />
+    <script src="../../static/js/script-navbar.js"></script>
+  </head>
+  <body>
+    <nav class="sidebar">
+      <div class="menu_content">
+        <ul class="menu_items">
+
+          <!-- Logo PT Truba Jaga Cita -->
+          <li class="item">
+            <img src="../../static/images/logo-ieps.png"/>
+          </li>
+
+          <br>
+          <!-- Tanggal -->
+          <li class="item">
+            <div class="date-box">
+              <span id="currentDay"></span>,
+              <span id="currentDate"></span>
+            </div>
+          </li>
+
+          <br>
+          <!-- Vendor : Vendor Assessment -->
+          <li class="item">
+            <a href="#" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-edit-alt"></i>
+              </span>
+              <span class="navlink">Vendor Assessment</span>
+            </a>
+          </li>
+
+          <!-- Vendor : Penawaran  -->
+          <li class="item">
+            <a href="#" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-receipt"></i>
+              </span>
+              <span class="navlink">Penawaran</span>
+            </a>
+          </li>
+
+          <!-- Vendor : Laporan Pengiriman -->
+          <li class="item">
+            <a href="#" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-package"></i>
+              </span>
+              <span class="navlink">Laporan Pengiriman</span>
+            </a>
+          </li>
+
+          <!-- Vendor : Logout -->
+          <li class="item">
+            <a href="#" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-log-out"></i>
+              </span>
+              <span class="navlink">Logout</span>
+            </a>
+          </li>
+
+        <!-- Profil -->
+        <div class="bottom_content">
+          <div class="bottom collapse_sidebar">
+            <img src="../../static/images/ava-admin.png" id="admin-avatar">
+            <div id="profil-content">
+              <span id="name">Hanni Pham</span>
+              <span id="role">Vendor</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </body>
+</html>
