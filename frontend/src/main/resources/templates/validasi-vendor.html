@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css"
+    />
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#table").DataTable({
+          paging: true,
+          pageLength: 5,
+          lengthMenu: [5, 10, 20],
+          columnDefs: [{ orderable: false, targets: 5 }],
+        });
+      });
+    </script>
+    <style>
+      header {
+        margin-left: 256px;
+      }
+    </style>
+    <title>Validasi Vendor</title>
+  </head>
+  <body>
+    <header>
+      <h1>Validasi Vendor</h1>
+      <p>Lorem Ipsu Dolor Sit Amet</p>
+    </header>
+    <main>
+      <table id="table">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>Perusahaan</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            th:each="vendor, iterationStatus: ${listVendor}"
+            th:if="${!vendor.isDeleted}"
+          >
+            <td th:text="${iterationStatus.index + 1}"></td>
+            <td th:text="${vendor.nama}"></td>
+            <td th:text="${vendor.namaPerusahaan}"></td>
+            <td th:text="${vendor.email}"></td>
+            <td th:text="${vendor.status}"></td>
+            <td>
+              <a th:href="@{/vendor/{id}(id=${vendor.id})}">Detail</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>
