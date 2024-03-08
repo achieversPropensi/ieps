@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        * {
+          font-family: "Poppins", sans-serif;
+        }
+
+        /* Split the screen in half */
+        .split {
+          height: 100%;
+          width: 50%;
+          position: fixed;
+          z-index: 1;
+          top: 0;
+          overflow-x: hidden;
+          padding-top: 20px;
+        }
+
+        /* Control the left side */
+        .left {
+          left: 0;
+          background-color: grey;
+          background-image: url('https://github.com/pudhiil/cobacoba/assets/94066150/b7cf0c25-09db-4a3f-9f92-27b448acf64b');
+          background-size: cover;
+          /* Menyesuaikan ukuran gambar dengan proporsi */
+          background-position: center;
+          /* Menempatkan gambar di tengah */
+        }
+
+        /* Control the right side */
+        .right {
+          right: 0;
+        }
+
+        /* If you want the content centered horizontally and vertically */
+        .centered {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+
+        /* Style for the submit button */
+        .form-group a {
+          width: 100%;
+          text-align: center;
+        }
+
+        /* Style for the button inside the form-group */
+        .form-group button {
+          width: 100%;
+        }
+
+        /* Style for the "Belum punya akun?" text */
+        .registration-text {
+          text-align: center;
+        }
+    </style>
+    <title>Form Vendor Assessment</title>
+</head>
+<body>
+<div class="container">
+    <div class="text-center pt-5">
+        <h2></h2>
+    </div>
+    <br>
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3>Edit Berkas</h3>
+            <h4>
+                <span th:if="${vendorInfo.status == 'Belum Terverifikasi'}" class="badge bg-secondary">Menunggu Verifikasi</span>
+                <span th:if="${vendorInfo.status == 'Gagal Terverifikasi'}" class="badge bg-danger">Gagal Terverifikasi</span>
+                <span th:if="${vendorInfo.status == 'Sudah Terverifikasi'}" class="badge bg-success">Sudah Terverifikasi</span>
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+            <form th:action="@{/vendor-assessment/update}" enctype="multipart/form-data" th:object="${berkasFormDTO}" method="POST">
+                <table class="table display table-bordered table-hover" style="width:100%">
+                    <thead class="table-dark">
+                    <tr style="text-align: center">
+                        <th>No</th>
+                        <th>Nama Berkas</th>
+                        <th>Upload Berkas</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="berkas, iterationStatus : ${listBerkasExisting}">
+                        <td th:text="${iterationStatus.count}"></td>
+                        <td th:text="${berkas.nama}"></td>
+
+                        <input type="hidden" class="form-control"
+                               th:field="*{listBerkas[__${iterationStatus.index}__].id}"/>
+
+                        <td>
+                            Berkas sebelumnya: <a th:href="${berkas.url}" th:text="${berkas.judul}" target="_blank"></a>
+                            <br>
+                            <input type="file" th:field="*{listBerkas[__${iterationStatus.index}__].file}"
+                                   class="form-control" accept=".pdf" required />
+
+                            <input type="hidden" class="form-control"
+                                   th:field="*{listBerkas[__${iterationStatus.index}__].nama}"/>
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p> Notes: Berkas yang diunggah harus dalam bentuk PDF dengan ukuran maksimal 5MB</p>
+                <div class="text-center m-3">
+                    <button type="submit" id="showModalBtn" class="btn btn-dark">Unggah</button>
+                </div>
+                <br>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="confirmationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Unggah</h5>
+                    <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                    ></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin mengunggah?</p>
+                </div>
+                <div class="modal-footer">
+                    <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                    >
+                        Tidak
+                    </button>
+                    <button type="button" class="btn btn-primary" id="confirmSubmitBtn">
+                        Ya
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document
+          .getElementById("showModalBtn")
+          .addEventListener("click", function () {
+            var modal = new bootstrap.Modal(
+              document.getElementById("confirmationModal")
+            );
+            modal.show();
+          });
+
+        document
+          .getElementById("confirmSubmitBtn")
+          .addEventListener("click", function () {
+            document.getElementById("registrationForm").submit();
+          });
+    </script>
+</div>
+</body>
+</html>
