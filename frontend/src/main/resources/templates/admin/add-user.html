@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Admin: Pengelolaan Data Pengguna</title>
+
+    <object th:include="~{fragments/commonfauzan :: css}" th:remove="tag"></object>
+
+    <style>
+
+        .pagetitle .icon {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .dropdown-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+    </style>
+
+    <script>
+        window.onload = function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var emailExist = urlParams.get('emailExist');
+            if (emailExist) {
+                alert('Email sudah terdaftar. Silakan gunakan email lain.');
+            }
+        };
+    </script>
+
+</head>
+
+<body>
+
+<main id="main" class="main">
+
+    <nav th:replace="~{fragments/navbar-admin :: navbar(activeTab)}"></nav>
+
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+        <div class="icon">
+            <a href="#" onclick="history.go(-1); return false;"><i class="bi bi-arrow-left"></i> Back</a>
+            <h1>Buat User Baru</h1>
+        </div>
+    </div><!-- End Page Title -->
+
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Pilih role, dan lanjutkan dengan mengisi formulir. </li>
+        </ol>
+    </nav>
+
+    <form id="userForm"
+            th:action="@{/admin/add-user}"
+            method="POST"
+            th:object="${userDTO}"
+            enctype="multipart/form-data"
+    >
+
+    <section class="section">
+        <div class="row mb-3">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="tab-pane fade show active profile-overview" id="profile-overview">
+
+                            <div class="row">
+                                <div class="card-title" style="margin-left:20px">Profile Details</div>
+                                <div style="position: absolute; top: 20px; left: 100px; margin-left: 100px;">
+
+                                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                                        <span id="selectedRole" class="d-none d-md-block dropdown-toggle ps-2">Role</span>
+                                    </a>
+
+                                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center" href="#" onclick="showFormElements('Admin')">
+                                                <span>Admin</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center" href="#" onclick="showFormElements('Procurement Manager')">
+                                                <span>Procurement Manager</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center"href="#" onclick="showFormElements('Procurement Staff')">
+                                                <span>Procurement Staff</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+
+                                    </ul><!-- End Role Dropdown -->
+                                </div>
+                            </div>
+
+                            <div class="form-elements" style="display: none;">
+
+                                <input type="hidden" id="role" name="role" th:value="${userDTO.role}">
+
+
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Nama</div>
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Password</div>
+                                </div>
+
+                                <div class="row" style="margin-bottom: 20px;">
+                                    <div class="col-lg-4 col-md-4">
+                                        <input type="text" class="form-control" id="nama" name="nama" th:field="*{nama}">
+                                    </div>
+                                    <div class="col-lg-4 col-md-4">
+                                        <input type="password" class="form-control" id="password" name="password" th:field="*{password}">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Email</div>
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">No. Telepon</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4">
+                                        <input type="email" class="form-control" id="email" name="email" th:field="*{email}">
+                                    </div>
+                                    <div class="col-lg-4 col-md-4">
+                                        <input type="tel" class="form-control" id="nomorTelefon" name="nomorTelefon"  th:field="*{nomorTelefon}">
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4 d-flex justify-content-center">
+                                    <div class="col-lg-6 col-md-6 text-center">
+                                        <button type="button" class="btn btn-primary" onclick="validateAndShowModal()">Simpan</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <!-- Modal Konfirmasi Simpan -->
+    <div class="modal fade" id="modalKonfirmasiSimpan" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Menambahkan User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin menambahkan user?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="saveUserData()">Ya, Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+</main><!-- End #main -->
+
+<object th:include="~{fragments/commonfauzan :: js}" th:remove="tag"></object>
+
+<!-- JS untuk form -->
+<script>
+    var role = ''; // Variabel untuk menyimpan peran yang dipilih
+
+    function showFormElements(selectedRole) {
+        role = selectedRole; // Simpan peran yang dipilih
+        var selectedRoleElement = document.getElementById("selectedRole");
+        selectedRoleElement.textContent = selectedRole;
+        var formElements = document.querySelector(".form-elements");
+        formElements.style.display = "block";
+
+        // Reset nilai input jika peran berubah
+        document.getElementById("nama").value = '';
+        document.getElementById("password").value = '';
+        document.getElementById("email").value = '';
+        document.getElementById("nomorTelefon").value = '';
+    }
+
+    function validateAndShowModal() {
+        var nama = document.getElementById("nama").value;
+        var password = document.getElementById("password").value;
+        var email = document.getElementById("email").value;
+        var nomorTelefon = document.getElementById("nomorTelefon").value;
+
+        // Regular expression untuk validasi password
+        var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+
+        // Regular expression untuk validasi email
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Regular expression untuk validasi nomor telepon
+        var phoneRegex = /^(\+?\d+)$/;
+
+        // Variable untuk menentukan apakah semua validasi berhasil
+        var isValid = true;
+
+        // Validasi input
+        if (nama === '' || password === '' || email === '' || nomorTelefon === '') {
+            alert('Silakan lengkapi semua field sebelum menyimpan data.');
+            isValid = false;
+        } else if (!passwordRegex.test(password)) {
+            alert('Password harus terdiri dari setidaknya satu huruf besar, satu huruf kecil, dan satu angka, dengan panjang minimal 8 karakter.');
+            isValid = false;
+        } else if (!emailRegex.test(email)) {
+            alert('Email harus valid (contoh: user@example.com)');
+            isValid = false;
+        } else if (!phoneRegex.test(nomorTelefon)) {
+            alert('Tolong masukkan nomor telepon yang valid.');
+            isValid = false;
+        }
+
+        // Jika terdapat kesalahan validasi, hentikan eksekusi lebih lanjut
+        if (!isValid) {
+            return;
+        }
+
+        // Jika semua validasi berhasil, tampilkan modal konfirmasi
+        var modal = new bootstrap.Modal(document.getElementById('modalKonfirmasiSimpan'));
+        modal.show();
+    }
+
+    function saveUserData() {
+        var nama = document.getElementById("nama").value;
+        var password = document.getElementById("password").value;
+        var email = document.getElementById("email").value;
+        var nomorTelefon = document.getElementById("nomorTelefon").value;
+
+        // Set nilai input tersembunyi untuk peran
+        document.getElementById("role").value = role;
+
+        // Cetak data (Untuk periksa)
+        console.log("Role:", role);
+        console.log("Nama:", nama);
+        console.log("Password:", password);
+        console.log("Email:", email);
+        console.log("No. Telepon:", nomorTelefon);
+        console.log("Role:", role);
+
+        // Submit formulir
+        document.getElementById("userForm").submit();
+    }
+
+</script>
+
+
+</body>
+
+</html>

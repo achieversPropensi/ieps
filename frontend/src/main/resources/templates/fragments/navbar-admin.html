@@ -1,75 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Navbar Admin</title>
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../../static/css/style-navbar.css" />
-    <script src="../../static/js/script-navbar.js"></script>
-  </head>
-  <body>
-    <nav class="sidebar">
-      <div class="menu_content">
-        <ul class="menu_items">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org"
+>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-          <!-- Logo PT Truba Jaga Cita -->
-          <li class="item">
-            <img src="../../static/images/logo-ieps.png"/>
-          </li>
+  <object th:insert="~{fragments/commonfauzan :: css}" th:remove="tag"></object>
+  <object th:insert="~{fragments/commonfauzan :: js}" th:remove="tag"></object>
 
-          <br>
-          <!-- Tanggal -->
-          <li class="item">
-            <div class="date-box">
-              <span id="currentDay"></span>,
-              <span id="currentDate"></span>
-            </div>
-          </li>
+  <title>Navbar Admin</title>
 
-          <br>
-          <!-- Admin : Pengelolaan Data Pengguna  -->
-          <li class="item">
-            <a href="#" class="nav_link">
+</head>
+<body>
+<nav th:fragment="navbar(activeTab)" class="sidebar">
+  <div class="menu_content">
+    <ul class="menu_items">
+
+      <!-- Logo PT Truba Jaga Cita -->
+      <li class="item">
+        <img src="https://github.com/fauzanrrizky/Achievers-IEPS/blob/main/images/logo-ieps.png?raw=true"
+             alt="Logo PT Truba">
+      </li>
+
+      <br>
+      <!-- Tanggal -->
+      <li class="item">
+        <div class="date-box">
+          <span id="currentDay"></span>,
+          <span id="currentDate"></span>
+        </div>
+      </li>
+
+      <br>
+      <!-- Admin : Pengelolaan Data Pengguna  -->
+      <li class="item">
+        <a href="/admin/view-user" class="nav_link">
               <span class="navlink_icon">
                 <i class="bx bx-data"></i>
               </span>
-              <span class="navlink">Pengelolaan Data Pengguna</span>
-            </a>
-          </li>
+          <span class="navlink">Pengelolaan Data Pengguna</span>
+        </a>
+      </li>
 
-          <!-- Admin : Vendor Assessment -->
-          <li class="item">
-            <a href="#" class="nav_link">
+      <!-- Admin : Vendor Assessment -->
+      <li class="item">
+        <a href="#" class="nav_link">
               <span class="navlink_icon">
                 <i class="bx bx-edit-alt"></i>
               </span>
-              <span class="navlink">Vendor Assessment</span>
-            </a>
-          </li>
+          <span class="navlink">Vendor Assessment</span>
+        </a>
+      </li>
 
-          <!-- Admin : Logout -->
-          <li class="item">
-            <a href="#" class="nav_link">
+      <!-- Admin : Logout -->
+      <li class="item">
+        <a href="/logout" class="nav_link">
               <span class="navlink_icon">
                 <i class="bx bx-log-out"></i>
               </span>
-              <span class="navlink">Logout</span>
-            </a>
-          </li>
+          <span class="navlink">Logout</span>
+        </a>
+      </li>
 
-          <!-- Profil -->
-          <div class="bottom_content">
-            <div class="bottom collapse_sidebar">
-              <img src="../../static/images/ava-admin.png" id="admin-avatar">
-              <div id="profil-content">
-                <span id="name">Rakan Fasya</span>
-                <span id="role">Admin</span>
-              </div>
-            </div>
+      <!-- Profil -->
+      <div class="bottom_content">
+        <div class="bottom collapse_sidebar">
+          <img src="https://github.com/fauzanrrizky/Achievers-IEPS/blob/main/images/ava-admin.png?raw=true"
+               alt="Admin Avatar"
+               id="admin-avatar">
+          <div id="profil-content">
+            <span id="name">Rakan Fasya</span>
+            <span id="role">Admin</span>
           </div>
-        </ul>
+        </div>
       </div>
-    </nav>
-  </body>
+    </ul>
+  </div>
+</nav>
+</body>
 </html>

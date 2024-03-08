@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Admin: Pengelolaan Data Pengguna</title>
+
+    <object th:include="~{fragments/commonfauzan :: css}" th:remove="tag"></object>
+
+    <style>
+        .wider{
+            min-width: 150px;
+        }
+
+        .pagetitle .icon {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+    </style>
+
+    <script>
+        window.onload = function() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var emailExist = urlParams.get('emailExist');
+            if (emailExist) {
+                alert('Email sudah terdaftar. Silakan gunakan email lain.');
+            }
+        };
+    </script>
+
+</head>
+
+<body>
+
+<main id="main" class="main">
+
+    <nav th:replace="~{fragments/navbar-admin :: navbar(activeTab)}"></nav>
+
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+        <div class="icon">
+            <a href="#" onclick="history.go(-1); return false;"><i class="bi bi-arrow-left"></i> Back</a>
+            <h1>Pengelolaan Data Pengguna</h1>
+        </div>
+    </div><!-- End Page Title -->
+
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Sistem kelola data User. </li>
+        </ol>
+    </nav>
+
+    <form id="userForm"
+          th:action="@{/admin/update-user-proc-admin}"
+          method="POST"
+          th:object="${userDTO}"
+          enctype="multipart/form-data"
+    >
+
+    <section class="section">
+        <div class="row mb-3">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="tab-pane fade show active profile-overview" id="profile-overview">
+
+                            <h5 class="card-title">Profile Details</h5>
+                            <input type="hidden" id="id" name="id" th:value="${user.id}">
+<!--                            <input type="hidden" id="password" name="password" th:value="${user.password}">-->
+                            <input type="hidden" id="role" name="role" th:value="${user.role}">
+
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 label text-bold text-primary">ID</div>
+                                <div class="col-lg-4 col-md-4 label text-bold text-primary">Role</div>
+                                <div class="col-lg-4 col-md-4 label text-bold text-primary">Password</div>
+                            </div>
+
+                            <div class="row" style="margin-bottom: 20px;">
+                                <div class="col-lg-4 col-md-4" th:text="${user.id}"></div>
+                                <div class="col-lg-4 col-md-4" th:text="${user.role}"></div>
+                                <div class="col-lg-4 col-md-4">******</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 label text-bold text-primary">Nama</div>
+                                <div class="col-lg-4 col-md-4 label text-bold text-primary">Email</div>
+                                <div class="col-lg-4 col-md-4 label text-bold text-primary">Telepon</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4">
+                                    <input type="text" class="form-control" id="nama" name="nama" th:field="*{nama}" th:placeholder="${user.nama}">
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                    <input type="email" class="form-control" id="email" name="email" th:field="*{email}" th:placeholder="${user.email}">
+                                </div>
+                                <div class="col-lg-4 col-md-4">
+                                    <input type="text" class="form-control" id="nomorTelefon" name="nomorTelefon" th:field="*{nomorTelefon}" th:placeholder="${user.nomorTelefon}">
+                                </div>
+
+                            </div>
+
+                            <div class="row mt-4 d-flex justify-content-center">
+                                <div class="col-lg-6 col-md-6 text-center">
+                                    <button type="button" class="btn btn-primary" onclick="validateAndShowModal()">Simpan</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </div>
+    </section>
+
+        <!-- Modal Konfirmasi Simpan -->
+        <div class="modal fade" id="modalKonfirmasiSimpan" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Update Data User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Apakah Anda yakin ingin mengubah data user?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-primary" onclick="saveUserData()">Ya, Simpan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+</main><!-- End #main -->
+
+<!-- JS Files -->
+<object th:include="~{fragments/commonfauzan :: js}" th:remove="tag"></object>
+
+<script>
+    var role = document.getElementById("role").value;
+
+    function validateAndShowModal() {
+        var nama = document.getElementById("nama").value;
+        var email = document.getElementById("email").value;
+        var nomorTelefon = document.getElementById("nomorTelefon").value;
+
+
+        // Regular expression untuk validasi email
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Regular expression untuk validasi nomor telepon
+        var phoneRegex = /^(\+?\d+)$/;
+
+        // Variable untuk menentukan apakah semua validasi berhasil
+        var isValid = true;
+
+        // Validasi input
+        if (nama === '' || email === '' || nomorTelefon === '') {
+            alert('Silakan lengkapi semua field sebelum menyimpan data.');
+            isValid = false;
+        } else if (!emailRegex.test(email)) {
+            alert('Email harus valid (contoh: user@example.com)');
+            isValid = false;
+        } else if (!phoneRegex.test(nomorTelefon)) {
+            alert('Tolong masukkan nomor telepon yang valid.');
+            isValid = false;
+        }
+
+        // Jika terdapat kesalahan validasi, hentikan eksekusi lebih lanjut
+        if (!isValid) {
+            return;
+        }
+
+        // Jika semua validasi berhasil, tampilkan modal konfirmasi
+        var modal = new bootstrap.Modal(document.getElementById('modalKonfirmasiSimpan'));
+        modal.show();
+    }
+
+    function saveUserData() {
+        var nama = document.getElementById("nama").value;
+        var email = document.getElementById("email").value;
+        var nomorTelefon = document.getElementById("nomorTelefon").value;
+
+        // Set nilai input tersembunyi untuk peran
+        document.getElementById("role").value = role;
+
+        // Cetak data (Untuk periksa)
+        console.log("Role:", role);
+        console.log("Nama:", nama);
+        console.log("Email:", email);
+        console.log("No. Telepon:", nomorTelefon);
+        console.log("Role:", role);
+
+        // Submit formulir
+        document.getElementById("userForm").submit();
+    }
+
+</script>
+
+
+</body>
+
+</html>

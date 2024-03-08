@@ -29,11 +29,13 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers( new AntPathRequestMatcher("/css/**")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/assets/**")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll()
                         .requestMatchers("/register").permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/test").permitAll()
-                        //TODO change permit
-                        .requestMatchers("/validasi-vendor").hasAnyAuthority("PROCSTAFF", "PROCMANAGER")
+
+                        .requestMatchers("admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
