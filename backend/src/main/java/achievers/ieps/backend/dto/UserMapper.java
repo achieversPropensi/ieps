@@ -3,6 +3,7 @@ package achievers.ieps.backend.dto;
 import achievers.ieps.backend.dto.request.CreateUserRequestDTO;
 import achievers.ieps.backend.dto.request.CreateVendorRequestDTO;
 import achievers.ieps.backend.dto.response.CreateUserResponseDTO;
+import achievers.ieps.backend.dto.response.VendorResponseDTO;
 import achievers.ieps.backend.model.UserModel;
 import achievers.ieps.backend.model.Vendor;
 import org.mapstruct.Mapper;
@@ -17,4 +18,6 @@ public interface UserMapper {
 
     @Mapping(target = "role", ignore = true)
     CreateUserResponseDTO createUserResponseDTOToUserModel(UserModel userModel);
+    @Mapping(target = "role", ignore = true)
+    VendorResponseDTO vendorResponseDTOToVendor(Vendor vendor);
 }

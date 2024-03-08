@@ -1,23 +1,24 @@
 package achievers.ieps.backend.dto.response;
 
+import achievers.ieps.backend.dto.request.CreateVendorRequestDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @AllArgsConstructor
-public class VendorResponseDTO {
-    private String id;
-    private String nama;
-    private String email;
+@NoArgsConstructor
+@Data
+public class VendorResponseDTO extends CreateVendorRequestDTO {
+    private UUID id;
+    @JsonIgnore
+    private LocalDateTime createdAt;
+    @JsonIgnore
+    private LocalDateTime updatedAt;
     private String role;
-    private String nomorTelefon;
-    private String password;
-
-    private String alamat;
-    private String namaPerusahaan;
+    private boolean isDeleted;
     private String status;
 }

@@ -1,160 +1,192 @@
 <!DOCTYPE html>
-<html
-  lang="en"
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://thymeleaf.org"
->
-  <head>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
     <meta charset="UTF-8" />
-    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
-    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <object th:include="~{fragments/commonfauzan :: css}" th:remove="tag"></object>
     <title>Profil Vendor</title>
-  </head>
 
-  <body>
-    <header>
-      <h1>Profil</h1>
-      <p>Lorem Ipsum Dolor Sit Amet</p>
-    </header>
-    <div class="card" style="width: 18rem">
-      <div class="card-body">
-        <h5 class="card-title">Profil Pengguna</h5>
-        <div class="container" th:object="${vendor}">
-          <div class="col">
-            <div class="row">
-              <h5>ID</h5>
-              <p th:text="*{id}"></p>
+    <!-- Template Main CSS File -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+    <style>
+        .wider {
+            min-width: 150px;
+        }
+
+        .pagetitle .icon {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    </style>
+</head>
+
+<body>
+    <main id="main" class="main">
+
+        <div class="pagetitle d-flex justify-content-between align-items-center">
+            <div class="icon">
+                <a href="validasi-vendor.html" onclick="history.go(-1); return false;"><i class="bi bi-arrow-left"></i> Back</a>
+                <h1>Validasi Vendor</h1>
             </div>
-            <div class="row">
-              <h5>Role</h5>
-              <p th:text="*{role}"></p>
+        </div><!-- End Page Title -->
+
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">Sistem validasi data Vendor.</li>
+            </ol>
+        </nav>
+        <section class="section">
+            <div class="row mb-3">
+                <div class="col-lg-12">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="tab-pane fade show active profile-overview" id="profile-overview"
+                                th:object="${vendor}">
+                                <div style="position: absolute; top: 20px; right: 20px; margin-right: 20px">
+                                    <!-- Jika status adalah "Belum Terverifikasi" -->
+                                    <th:block th:if="${vendor.status == 'Belum Terverifikasi'}">
+                                        <button type="button" class="btn btn-warning" disabled>Belum
+                                            Terverifikasi</button>
+                                    </th:block>
+
+                                    <!-- Jika status adalah "Gagal Terverifikasi" -->
+                                    <th:block th:if="${vendor.status == 'Gagal Terverifikasi'}">
+                                        <button type="button" class="btn btn-danger" disabled>Gagal
+                                            Terverifikasi</button>
+                                    </th:block>
+
+                                    <!-- Jika status adalah "Sudah Terverifikasi" -->
+                                    <th:block th:if="${vendor.status == 'Sudah Terverifikasi'}">
+                                        <button type="button" class="btn btn-success" disabled>Sudah
+                                            Terverifikasi</button>
+                                    </th:block>
+                                </div>
+
+
+                                <div class="card-title" style="margin-left:20px">Profil Pengguna</div>
+
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">ID</div>
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Role</div>
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Password</div>
+                                </div>
+
+                                <div class="row" style="margin-bottom: 20px;">
+                                    <div class="col-lg-4 col-md-4" th:text="${vendor.id}"></div>
+                                    <div class="col-lg-4 col-md-4" th:text="${vendor.role}"></div>
+                                    <div class="col-lg-4 col-md-4">******</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Nama</div>
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Email</div>
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Telepon</div>
+                                </div>
+
+                                <div class="row" style="margin-bottom: 20px;">
+                                    <div class="col-lg-4 col-md-4" th:text="${vendor.nama}"></div>
+                                    <div class="col-lg-4 col-md-4" th:text="${vendor.email}"></div>
+                                    <div class="col-lg-4 col-md-4" th:text="${vendor.nomorTelefon}"></div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Perusahaan</div>
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Alamat</div>
+                                </div>
+
+                                <div class="row" style="margin-bottom: 20px;">
+                                    <div class="col-lg-4 col-md-4" th:text="${vendor.namaPerusahaan}"></div>
+                                    <div class="col-lg-4 col-md-4" th:text="${vendor.alamat}"></div>
+                                </div>
+
+                                <div class="row mt-4 d-flex justify-content-center">
+                                    <div class="col-lg-6 col-md-6 text-center">
+                                        <div
+                                            th:if="${vendor.status == 'Gagal Terverifikasi' || vendor.status == 'Belum Terverifikasi'}">
+                                            <button class="btn btn-light btn-outline-dark" id="cancelConfirmationBtn">
+                                                Dibatalkan
+                                            </button>
+                                            <button class="btn btn-dark" id="verifyConfirmationBtn">
+                                                Verifikasi
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal" id="cancelConfirmationModal" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Dibatalkan</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Apakah Anda yakin ingin membatalkan?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                                    Tidak
+                                                </button>
+                                                <a class="btn btn-primary"
+                                                    th:href="@{/vendor/{id}/validasi/{status}(id=${vendor.id}, status='Gagal')}">Ya</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal" id="verifyConfirmationModal" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Verifikasi</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Apakah Anda yakin ingin verifikasi?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                                    Tidak
+                                                </button>
+                                                <a class="btn btn-primary"
+                                                    th:href="@{/vendor/{id}/validasi/{status}(id=${vendor.id}, status='Berhasil')}">Ya</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="row">
-              <h5>Alamat</h5>
-              <p th:text="*{alamat}"></p>
-            </div>
-            <div class="row">
-              <h5>Password</h5>
-              <p type="password" th:text="*{password}"></p>
-            </div>
-            <div class="row">
-              <h5>Status</h5>
-              <p th:text="*{status}"></p>
-            </div>
-          </div>
-          <div class="col">
-            <div class="row">
-              <h5>Nama</h5>
-              <p th:text="*{nama}"></p>
-            </div>
-            <div class="row">
-              <h5>Email</h5>
-              <p th:text="*{email}"></p>
-            </div>
-            <div class="row">
-              <h5>Perusahaan</h5>
-              <p th:text="*{namaPerusahaan}"></p>
-            </div>
-            <div class="row">
-              <h5>Telepon</h5>
-              <p th:text="*{nomorTelefon}"></p>
-            </div>
-          </div>
-        </div>
-        <div
-          th:if="${vendor.status == 'Gagal Terverifikasi' || vendor.status == 'Belum Terverifikasi'}"
-        >
-          <button class="btn btn-light" id="cancelConfirmationBtn">
-            Dibatalkan
-          </button>
-          <button class="btn btn-dark" id="verifyConfirmationBtn">
-            Verifikasi
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="modal" id="cancelConfirmationModal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Dibatalkan</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p>Apakah Anda yakin ingin membatalkan?</p>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-danger"
-              data-bs-dismiss="modal"
-            >
-              Tidak
-            </button>
-            <a
-              class="btn btn-primary"
-              th:href="@{/vendor/{id}/validasi/{status}(id=${vendor.id}, status='Gagal')}"
-              >Ya</a
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal" id="verifyConfirmationModal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Verifikasi</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <p>Apakah Anda yakin ingin verifikasi?</p>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-danger"
-              data-bs-dismiss="modal"
-            >
-              Tidak
-            </button>
-            <a
-              class="btn btn-primary"
-              th:href="@{/vendor/{id}/validasi/{status}(id=${vendor.id}, status='Berhasil')}"
-              >Ya</a
-            >
-          </div>
-        </div>
-      </div>
-    </div>
+        </section>
+    </main>
+    <!-- End #main -->
+    <object th:include="~{fragments/commonfauzan :: js}" th:remove="tag"></object>
     <script>
-      document
-        .getElementById("cancelConfirmationBtn")
-        .addEventListener("click", function () {
-          var modal = new bootstrap.Modal(
-            document.getElementById("cancelConfirmationModal")
-          );
-          modal.show();
-        });
+        document
+            .getElementById("cancelConfirmationBtn")
+            .addEventListener("click", function () {
+                var modal = new bootstrap.Modal(
+                    document.getElementById("cancelConfirmationModal")
+                );
+                modal.show();
+            });
 
-      document
-        .getElementById("verifyConfirmationBtn")
-        .addEventListener("click", function () {
-          var modal = new bootstrap.Modal(
-            document.getElementById("verifyConfirmationModal")
-          );
-          modal.show();
-        });
+        document
+            .getElementById("verifyConfirmationBtn")
+            .addEventListener("click", function () {
+                var modal = new bootstrap.Modal(
+                    document.getElementById("verifyConfirmationModal")
+                );
+                modal.show();
+            });
     </script>
-  </body>
+</body>
+
 </html>

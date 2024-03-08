@@ -10,4 +10,3 @@ import lombok.Setter;
 @Table(name = "procStaff")
 public class ProcStaff extends UserModel {
 }
-

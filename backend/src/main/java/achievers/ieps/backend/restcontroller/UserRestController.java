@@ -6,6 +6,7 @@ import achievers.ieps.backend.dto.request.CreateVendorRequestDTO;
 import achievers.ieps.backend.dto.request.LoginJwtRequestDTO;
 import achievers.ieps.backend.dto.response.CreateUserResponseDTO;
 import achievers.ieps.backend.dto.response.LoginJwtResponseDTO;
+import achievers.ieps.backend.dto.response.VendorResponseDTO;
 import achievers.ieps.backend.model.Role;
 import achievers.ieps.backend.model.UserModel;
 import achievers.ieps.backend.model.Vendor;
@@ -41,15 +42,19 @@ public class UserRestController {
     }
 
     @GetMapping("/detail-profil/{id}")
-    public ResponseEntity<Vendor> detailProfil(@PathVariable UUID id){
+    public ResponseEntity<VendorResponseDTO> detailProfil(@PathVariable UUID id){
         Vendor vendor = userService.vendorDetails(id);
-        return ResponseEntity.ok(vendor);
+        var vendorDTO = userMapper.vendorResponseDTOToVendor(vendor);
+        vendorDTO.setRole(vendor.getRole().getRole());
+        return ResponseEntity.ok(vendorDTO);
     }
 
     @PutMapping("/detail-profil/{id}/validasi")
-    public ResponseEntity<Vendor> updateStatusProfil(@PathVariable UUID id, @RequestBody String status){
+    public ResponseEntity<VendorResponseDTO> updateStatusProfil(@PathVariable UUID id, @RequestBody String status){
         var vendor = userService.setUpdateStatus(id, status);
-        return ResponseEntity.ok(vendor);
+        var vendorDTO = userMapper.vendorResponseDTOToVendor(vendor);
+        vendorDTO.setRole(vendor.getRole().getRole());
+        return ResponseEntity.ok(vendorDTO);
     }
 
     @PostMapping("/info")
@@ -101,5 +106,4 @@ public class UserRestController {
             }
         }
     }
-
 }
