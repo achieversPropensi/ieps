@@ -35,7 +35,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/test").permitAll()
 
-                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/admin/**").permitAll()
                         .requestMatchers("/validasi-vendor").hasAnyAuthority("PROCSTAFF", "PROCMANAGER")
                         .requestMatchers("/vendor-assessment/**").hasAnyAuthority("VENDOR", "VENDOR_NOT_VALID")
                         .anyRequest().authenticated()
