@@ -1,68 +1,88 @@
 <!DOCTYPE html>
-<html
-  lang="en"
-  xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://thymeleaf.org"
->
-  <head>
-    <meta charset="UTF-8" />
-    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
-    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-    <link
-      rel="stylesheet"
-      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css"
-    />
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
-    <script>
-      $(document).ready(function () {
-        $("#table").DataTable({
-          paging: true,
-          pageLength: 5,
-          lengthMenu: [5, 10, 20],
-          columnDefs: [{ orderable: false, targets: 5 }],
-        });
-      });
-    </script>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <object th:include="~{fragments/commonfauzan :: css}" th:remove="tag"></object>
+
+    <title>List Validasi Vendor</title>
+
     <style>
-      header {
-        margin-left: 256px;
-      }
+        .wider {
+            min-width: 150px;
+        }
     </style>
-    <title>Validasi Vendor</title>
-  </head>
-  <body>
-    <header>
-      <h1>Validasi Vendor</h1>
-      <p>Lorem Ipsu Dolor Sit Amet</p>
-    </header>
-    <main>
-      <table id="table">
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Nama</th>
-            <th>Perusahaan</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Detail</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            th:each="vendor, iterationStatus: ${listVendor}"
-            th:if="${!vendor.isDeleted}"
-          >
-            <td th:text="${iterationStatus.index + 1}"></td>
-            <td th:text="${vendor.nama}"></td>
-            <td th:text="${vendor.namaPerusahaan}"></td>
-            <td th:text="${vendor.email}"></td>
-            <td th:text="${vendor.status}"></td>
-            <td>
-              <a th:href="@{/vendor/{id}(id=${vendor.id})}">Detail</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </main>
-  </body>
+
+</head>
+
+<body>
+
+    <main id="main" class="main">
+        
+        <div class="pagetitle d-flex justify-content-between align-items-center">
+            <h1>Validasi Vendor</h1>
+        </div><!-- End Page Title -->
+
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">Sistem validasi vendor.</li>
+            </ol>
+        </nav>
+
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Daftar Vendor</h5>
+                            <p>Berikut adalah daftar Vendor sistem Integrated E-Procurement System.</p>
+
+                            <!-- Table with stripped rows -->
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th><b>No</b></th>
+                                        <th><b>Nama Pengguna</b></th>
+                                        <th><b>Role</b></th>
+                                        <th><b>Email</b></th>
+                                        <th><b>Detail</b></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Looping data pengguna dari model -->
+                                    <tr th:each="vendor, userStat : ${listVendor}" th:if="${!vendor.isDeleted}">
+                                        <td th:text="${userStat.count}"></td>
+                                        <td th:text="${vendor.nama}"></td>
+                                        <td th:text="${vendor.namaPerusahaan}"></td>
+                                        <td th:text="${vendor.email}"></td>
+                                        <td th:text="${vendor.status}"></td>
+                                        <td>
+                                            <a th:href="@{/vendor/{id}(id=${vendor.id})}">Detail</a>
+                                        </td>
+                                        <!-- Tambahkan kolom lain di sini jika diperlukan -->
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- End Table with stripped rows -->
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main><!-- End #main -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+
+    <object th:include="~{fragments/commonfauzan :: js}" th:remove="tag"></object>
+
+</body>
+
 </html>

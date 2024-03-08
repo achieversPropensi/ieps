@@ -39,8 +39,6 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/user/**").permitAll()
                         .requestMatchers("/api/login").permitAll()
-                        .requestMatchers("/api/berkas/**").permitAll()
-                        .requestMatchers("/api/admin/**").permitAll()
                         .requestMatchers("/api/user/detail-profil").hasAnyAuthority("PROCSTAFF", "PROCMANAGER")
                         .anyRequest().authenticated()
                 )
