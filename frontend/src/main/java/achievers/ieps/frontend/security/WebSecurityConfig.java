@@ -35,7 +35,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/test").permitAll()
 
-                        .requestMatchers("admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/validasi-vendor").hasAnyAuthority("PROCSTAFF", "PROCMANAGER")
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
