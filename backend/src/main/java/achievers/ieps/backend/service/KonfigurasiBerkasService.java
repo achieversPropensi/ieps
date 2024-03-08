@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface KonfigurasiBerkasService {
     List<KonfigurasiBerkas> getAllKonfigurasiBerkas();
+    List<KonfigurasiBerkas> getAllKonfigurasiBerkas2();
     ResponseEntity<String> addKonfigurasiBerkas(List<KonfigurasiBerkas> listKonfigurasiBerkas);
     
 }

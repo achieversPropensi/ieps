@@ -18,7 +18,7 @@ public class KonfigurasiBerkas {
     
     @Id
     @Column(name = "berkas_id")
-    private UUID berkasId = UUID.randomUUID();
+    private String berkasId;
 
     @NotNull
     @Column(name = "nama_berkas")
@@ -27,4 +27,8 @@ public class KonfigurasiBerkas {
     @NotNull
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = Boolean.FALSE;
+
+    @NotNull
+    @Column(name = "deskripsi")
+    private String deskripsi;
 }

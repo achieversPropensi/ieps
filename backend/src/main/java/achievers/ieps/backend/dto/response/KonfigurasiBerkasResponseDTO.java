@@ -1,4 +1,4 @@
-package achievers.ieps.frontend.dto.response;
+package achievers.ieps.backend.dto.response;
 
 import java.util.UUID;
 
@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class KonfigurasiBerkasResponseDTO {
-    private String berkasId;
     private String namaBerkas;
     private boolean isDeleted;
-
+    private String berkasId;
 }
