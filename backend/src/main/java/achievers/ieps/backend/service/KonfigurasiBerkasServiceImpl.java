@@ -22,12 +22,38 @@ public class KonfigurasiBerkasServiceImpl implements KonfigurasiBerkasService{
 
     @Override
     public List<KonfigurasiBerkas> getAllKonfigurasiBerkas(){
+        var listNoDeleted = konfigurasiBerkasDb.findAll();
+        System.out.println(listNoDeleted.size());
+        for (int i = 0; i < listNoDeleted.size(); i++){
+            if(listNoDeleted.get(i).isDeleted()){
+                listNoDeleted.remove(i);
+            }
+        }
+        
+        // Just make sure due to some errors
+        for (int i = 0; i < listNoDeleted.size(); i++){
+            if(listNoDeleted.get(i).isDeleted()){
+                listNoDeleted.remove(i);
+            }
+        }
+
+        return listNoDeleted; 
+        
+    }
+
+    @Override
+    public List<KonfigurasiBerkas> getAllKonfigurasiBerkas2(){
         return konfigurasiBerkasDb.findAll();
     }
 
     @Override
     public ResponseEntity<String> addKonfigurasiBerkas(List<KonfigurasiBerkas> listKonfigurasiBerkas) {
         List<KonfigurasiBerkas> listKB = getAllKonfigurasiBerkas();
+
+        // Handle berkas hanya ada 5
+        if (listKonfigurasiBerkas.size() == 5){
+            return ResponseEntity.badRequest().body("Maksimum 5 konfigurasi berkas");
+        }
 
         // Handle input kososng
         if (listKonfigurasiBerkas.isEmpty()){
@@ -46,6 +72,7 @@ public class KonfigurasiBerkasServiceImpl implements KonfigurasiBerkasService{
             namaBerkasSet.add(kb.getNamaBerkas());
         }
         
+        // Handle soft delete
         for (KonfigurasiBerkas kb : listKB) {
             if (listKonfigurasiBerkas.contains(kb)) {
                 listKonfigurasiBerkas.remove(kb);
@@ -54,7 +81,10 @@ public class KonfigurasiBerkasServiceImpl implements KonfigurasiBerkasService{
             }
         }
 
+        // Save
         for (KonfigurasiBerkas kb : listKonfigurasiBerkas) {
+            String berkasId = kb.getNamaBerkas().replace(" ", "-").toLowerCase();
+            kb.setBerkasId(berkasId);
             konfigurasiBerkasDb.save(kb);
         }
         return ResponseEntity.ok("Konfigurasi berkas berhasil ditambahkan.");
