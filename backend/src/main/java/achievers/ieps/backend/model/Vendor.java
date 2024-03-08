@@ -1,10 +1,13 @@
 package achievers.ieps.backend.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,4 +27,13 @@ public class Vendor extends UserModel {
     @NotNull
     @Column(name = "status")
     private String status;
+
+    @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<Berkas> listBerkas;
+
+    @NotNull
+    @Column(name = "has_submitted")
+    @JsonIgnore
+    private boolean hasSubmitted = Boolean.FALSE;
 }
