@@ -4,7 +4,7 @@ import achievers.ieps.backend.dto.request.AdminCreateUserRequestDTO;
 import achievers.ieps.backend.dto.request.AdminUpdateUserRequestDTO;
 import achievers.ieps.backend.dto.request.UpdateVendorRequestDTO;
 import achievers.ieps.backend.dto.response.UserModelResponseDTO;
-import achievers.ieps.backend.dto.response.VendorResponseDTO;
+import achievers.ieps.backend.dto.response.VendorResponseDTOFauzan;
 import achievers.ieps.backend.model.*;
 import achievers.ieps.backend.repository.*;
 import jakarta.transaction.Transactional;
@@ -90,9 +90,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public VendorResponseDTO getVendorById(UUID userId) {
+    public VendorResponseDTOFauzan getVendorById(UUID userId) {
         var vendor = vendorDb.findById(userId);
-        VendorResponseDTO vendorDTO = new VendorResponseDTO();
+        VendorResponseDTOFauzan vendorDTO = new VendorResponseDTOFauzan();
 
         if (vendor.isPresent()) {
             vendorDTO.setId(vendor.get().getId().toString());

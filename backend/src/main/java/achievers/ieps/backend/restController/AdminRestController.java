@@ -1,4 +1,4 @@
-package achievers.ieps.backend.restController;
+package achievers.ieps.backend.restcontroller;
 
 import achievers.ieps.backend.dto.request.AdminCreateUserRequestDTO;
 import achievers.ieps.backend.dto.request.AdminUpdateUserRequestDTO;

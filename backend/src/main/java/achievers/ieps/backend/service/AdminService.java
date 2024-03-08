@@ -4,7 +4,7 @@ import achievers.ieps.backend.dto.request.AdminCreateUserRequestDTO;
 import achievers.ieps.backend.dto.request.AdminUpdateUserRequestDTO;
 import achievers.ieps.backend.dto.request.UpdateVendorRequestDTO;
 import achievers.ieps.backend.dto.response.UserModelResponseDTO;
-import achievers.ieps.backend.dto.response.VendorResponseDTO;
+import achievers.ieps.backend.dto.response.VendorResponseDTOFauzan;
 import achievers.ieps.backend.model.UserModel;
 import achievers.ieps.backend.model.Vendor;
 
@@ -21,7 +21,7 @@ public interface AdminService {
 
     UserModel findUserById(UUID id);
 
-    VendorResponseDTO getVendorById(UUID id);
+    VendorResponseDTOFauzan getVendorById(UUID id);
 
     UserModel createUserModel(AdminCreateUserRequestDTO adminCreateUserRequestDTO);
 
