@@ -2,6 +2,7 @@ package achievers.ieps.backend.service;
 
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -21,24 +22,17 @@ public class KonfigurasiBerkasServiceImpl implements KonfigurasiBerkasService{
 
     @Override
     public List<KonfigurasiBerkas> getAllKonfigurasiBerkas(){
-        var listNoDeleted = konfigurasiBerkasDb.findAll();
-        System.out.println(listNoDeleted.size());
-        for (int i = 0; i < listNoDeleted.size(); i++){
-            if(listNoDeleted.get(i).isDeleted()){
-                listNoDeleted.remove(i);
+        var listNoDeleted = konfigurasiBerkasDb.findAll();        
+        Iterator<KonfigurasiBerkas> iterator = listNoDeleted.iterator();
+        while(iterator.hasNext()){
+            KonfigurasiBerkas konfigurasiBerkas = iterator.next();
+            if(konfigurasiBerkas.isDeleted()){
+                iterator.remove(); 
             }
         }
-        
-        // Just make sure due to some errors
-        for (int i = 0; i < listNoDeleted.size(); i++){
-            if(listNoDeleted.get(i).isDeleted()){
-                listNoDeleted.remove(i);
-            }
-        }
-
         return listNoDeleted; 
-        
     }
+    
 
     @Override
     public List<KonfigurasiBerkas> getAllKonfigurasiBerkas2(){
@@ -49,15 +43,20 @@ public class KonfigurasiBerkasServiceImpl implements KonfigurasiBerkasService{
     public ResponseEntity<String> addKonfigurasiBerkas(List<KonfigurasiBerkas> listKonfigurasiBerkas) {
         List<KonfigurasiBerkas> listKB = getAllKonfigurasiBerkas();
 
+        // Handle input kososng
+        if (listKonfigurasiBerkas.isEmpty() || listKonfigurasiBerkas == null){
+            for (KonfigurasiBerkas kb : listKB) {
+                kb.setDeleted(true);
+            }
+            return ResponseEntity.ok("Konfigurasi berkas berhasil ditambahkan.");
+        }
+        
+
         // Handle berkas hanya ada 5
         if (listKonfigurasiBerkas.size() == 5){
             return ResponseEntity.badRequest().body("Maksimum 5 konfigurasi berkas");
         }
 
-        // Handle input kososng
-        if (listKonfigurasiBerkas.isEmpty()){
-            return ResponseEntity.badRequest().body("Tidak boleh kosong");
-        }
 
         // Handle input namaBerkas dan Nama Berkas sama
         Set<String> namaBerkasSet = new HashSet<>();
@@ -84,6 +83,19 @@ public class KonfigurasiBerkasServiceImpl implements KonfigurasiBerkasService{
         for (KonfigurasiBerkas kb : listKonfigurasiBerkas) {
             String berkasId = kb.getNamaBerkas().replace(" ", "-").toLowerCase();
             kb.setBerkasId(berkasId);
+            
+            String[] words = kb.getNamaBerkas().split("\\s+");
+            StringBuilder result = new StringBuilder();
+    
+            for (String word : words) {
+                if (!word.isEmpty()) {
+                    result.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(" ");
+                }
+            }
+    
+            String nb =  result.toString().trim();
+            kb.setNamaBerkas(nb);
+            
             konfigurasiBerkasDb.save(kb);
         }
         return ResponseEntity.ok("Konfigurasi berkas berhasil ditambahkan.");
