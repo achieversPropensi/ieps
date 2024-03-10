@@ -166,7 +166,7 @@ public class AdminController {
 
             if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
                 redirectAttributes.addFlashAttribute("success", "New user added successfully");
-                return "redirect:view-user";
+                return "redirect:/admin/view-user?success=User baru berhasil tersimpan";
             } else if (response.getBody().getMessage().equals("Email sudah terdaftar")) {
                 return "redirect:add-user?emailExist=true";
             }
@@ -207,7 +207,7 @@ public class AdminController {
 
             if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
                 redirectAttributes.addFlashAttribute("success", "User deleted successfully");
-                return "redirect:/admin/view-user";
+                return "redirect:/admin/view-user?success=User berhasil dihapus";
             } else {
                 redirectAttributes.addFlashAttribute("error", response.getBody().getError());
             }
@@ -278,7 +278,7 @@ public class AdminController {
 
         if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
             redirectAttributes.addFlashAttribute("success", "User updated successfully");
-            return  "redirect:/admin/view-user";
+            return  "redirect:/admin/view-user?success=User berhasil diperbarui";
         } else if (response.getBody().getMessage().equals("Email sudah terdaftar")){
             redirectAttributes.addFlashAttribute("error", response.getBody().getError());
             return "redirect:/admin/" + response.getBody().getResult().getId() + "/update-user-proc-admin?emailExist=true";
@@ -350,7 +350,7 @@ public class AdminController {
 
         if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
             redirectAttributes.addFlashAttribute("success", "User updated successfully");
-            return  "redirect:/admin/view-user";
+            return  "redirect:/admin/view-user?success=User berhasil diperbarui";
         } else if (response.getBody().getMessage().equals("Email sudah terdaftar")){
             redirectAttributes.addFlashAttribute("error", response.getBody().getError());
             return "redirect:/admin/" + response.getBody().getResult().getId() + "/update-user-vendor?emailExist=true";
