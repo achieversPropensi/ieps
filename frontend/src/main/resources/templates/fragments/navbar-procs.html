@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en"
+xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+    <object th:insert="~{fragments/commonfauzan :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/commonfauzan :: js}" th:remove="tag"></object>
+  
+    <title>Navbar Procurement Staff</title>
+  
+  </head>
+  <body>
+    <nav th:fragment="navbar(activeTab)" class="sidebar">
+      <div class="menu_content">
+        <ul class="menu_items">
+
+          <!-- Logo PT Truba Jaga Cita -->
+          <li class="item">
+            <img src="https://github.com/fauzanrrizky/Achievers-IEPS/blob/main/images/logo-ieps.png?raw=true"
+            alt="Logo PT Truba">
+          </li>
+
+          <br>
+          <!-- Tanggal -->
+          <li class="item">
+            <div class="date-box">
+              <span id="currentDay"></span>,
+              <span id="currentDate"></span>
+            </div>
+          </li>
+
+          <br>
+          <!-- Staff : Vendor Assessment -->
+          <li class="item">
+            <a href="/konfigurasi-berkas" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-edit-alt"></i>
+              </span>
+              <span class="navlink">Vendor Assessment</span>
+            </a>
+          </li>
+
+          <!-- Staff : Validasi Vendor  -->
+          <li class="item">
+            <a href="/validasi-vendor" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-buildings"></i>
+              </span>
+              <span class="navlink">Validasi Vendor</span>
+            </a>
+          </li>
+
+          <!-- Staff : Quotation  -->
+          <li class="item">
+            <a href="#" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-receipt"></i>
+              </span>
+              <span class="navlink">Quotation</span>
+            </a>
+          </li>
+
+          <!-- Staff : Laporan Pengiriman -->
+          <li class="item">
+            <a href="#" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-package"></i>
+              </span>
+              <span class="navlink">Laporan Pengiriman</span>
+            </a>
+          </li>
+
+          <!-- Staff : Logout -->
+          <li class="item">
+            <a href="/logout" class="nav_link">
+              <span class="navlink_icon">
+                <i class="bx bx-log-out"></i>
+              </span>
+              <span class="navlink">Logout</span>
+            </a>
+          </li>
+
+        <!-- Profil -->
+        <div class="bottom_content">
+          <div class="bottom collapse_sidebar">
+            <a href="/profile/view"></a>
+            <img src="https://github.com/fauzanrrizky/Achievers-IEPS/blob/main/images/ava-admin.png?raw=true"
+            alt="Admin Avatar"
+            id="admin-avatar">
+            <div id="profil-content">
+              <a href="/profile/view">
+              <span id="name" th:text="${user.nama}"></span>
+              <span id="role">Procurement Staff</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </body>
+</html>
