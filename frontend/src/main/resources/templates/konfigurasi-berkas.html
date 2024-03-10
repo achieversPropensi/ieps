@@ -48,25 +48,32 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Daftar Konfigurasi Berkas</h5>
-                        
+                        <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th>Nomor</th>
                                     <th>Nama Berkas</th>
+                                    <th>Deskripsi Berkas</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody th:if="${#lists.isEmpty(lst)}">
+                                <tr>
+                                    <td colspan="6" class="text-center">Tidak ada konfigurasi berkas. Silahkan menambahkannya!</td>
+                                </tr>
+                            </tbody>
+                            <tbody th:unless="${#lists.isEmpty(lst)}">
                                 <!-- Iterasi melalui daftar konfigurasi berkas -->
                                 <tr th:each="berkas, iterStat : ${lst}">
                                     <td th:text="${iterStat.index + 1}"></td>
                                     <td th:text="${berkas.namaBerkas}"></td>
+                                    <td th:text="${berkas.deskripsi}"></td>
                                 </tr>
                             </tbody>
                         </table>
 
                         <div class="text-center">
-                            <a href="konfigurasi-berkas/edit" class="btn btn-dark">Ubah</a>
+                            <a th:text="${#lists.isEmpty(lst) ? 'Tambah' : 'Ubah'}" th:href="@{../konfigurasi-berkas/edit}" class="btn btn-dark"></a>
                         </div>
 
                     </div>
@@ -76,17 +83,31 @@
         </div>
     </section>
 
-</main><!-- End #main -->
+</main>
 
 <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
 <!-- JS Files -->
-<script src="/assets/simple-datatables/simple-datatables.js"></script>
 <script src="/assets/tinymce/tinymce.min.js"></script>
 
 <!-- Template Main JS File -->
 <script src="/assets/js/main.js"></script>
 
+<!-- Template Main JS File -->
+<script src="/assets/js/main.js"></script>
+
+<script>
+    // Ambil pesan keberhasilan dari model jika ada
+    var successMessage = thymeleaf.expression('${successMessage}');
+
+    // Jika pesan keberhasilan ada, tampilkan modal
+    if (successMessage !== '') {
+        var modal = new bootstrap.Modal(document.getElementById("successModal"));
+        modal.show();
+    }
+
+
+</script>
 
 </body>
 

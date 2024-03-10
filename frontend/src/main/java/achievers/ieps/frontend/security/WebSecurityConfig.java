@@ -25,9 +25,9 @@ public class WebSecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/profile/view").permitAll()
                         .requestMatchers("/test").permitAll()
-
                         .requestMatchers("/admin/**").permitAll()
                         .requestMatchers("/validasi-vendor").hasAnyAuthority("PROCSTAFF", "PROCMANAGER")
+                        .requestMatchers("/konfigurasi-berkas/**").hasAnyAuthority("PROCSTAFF", "PROCMANAGER","ADMIN")
                         .requestMatchers("/vendor-assessment/**").hasAnyAuthority("VENDOR", "VENDOR_NOT_VALID")
                         .anyRequest().authenticated()
                 )

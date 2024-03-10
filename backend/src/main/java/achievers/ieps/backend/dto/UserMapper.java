@@ -25,3 +25,4 @@ public interface UserMapper {
     @Mapping(target = "role", ignore = true)
     UserModelResponseDTO userModelToUserModelResponseDTO(UserModel user);
 }
+

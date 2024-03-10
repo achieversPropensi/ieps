@@ -39,6 +39,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/admin/**").permitAll()
                         .requestMatchers("/api/berkas/**").permitAll()
                         .requestMatchers("/api/user/detail-profil").hasAnyAuthority("PROCSTAFF", "PROCMANAGER")
+                        .requestMatchers("/api/konfigurasi-berkas/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

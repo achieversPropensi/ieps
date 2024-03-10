@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class KonfigurasiBerkasRestServiceImpl implements KonfigurasiBerkasRestService{
+    private final List lst = new ArrayList<>();
     private final WebClient webClient;
     private final String backendUrl = "http://localhost:8080/api/konfigurasi-berkas";
 
@@ -48,7 +49,19 @@ public class KonfigurasiBerkasRestServiceImpl implements KonfigurasiBerkasRestSe
 
     @Override
     public ResponseEntity<String> addKonfigurasiBerkas(List<CreateKonfigurasiBerkasRequestDTO> listKonfigurasiBerkas, String token){
-        var response = this.webClient
+        if (listKonfigurasiBerkas == null || listKonfigurasiBerkas.isEmpty()) {
+            var response = this.webClient
+                .put()
+                .uri("/add")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .bodyValue(lst)
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(responseBody -> ResponseEntity.ok("Successfully added konfigurasi berkas.")) // Map the response body to a success message
+                .block();
+            return response;
+        } else {
+            var response = this.webClient
                 .put()
                 .uri("/add")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -57,8 +70,9 @@ public class KonfigurasiBerkasRestServiceImpl implements KonfigurasiBerkasRestSe
                 .bodyToMono(String.class)
                 .map(responseBody -> ResponseEntity.ok("Successfully added konfigurasi berkas.")) // Map the response body to a success message
                 .block();
+            return response;
+        }
         
-        return response;
     }
 
     
