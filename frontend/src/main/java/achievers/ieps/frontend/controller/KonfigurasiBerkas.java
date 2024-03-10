@@ -1,5 +1,6 @@
 package achievers.ieps.frontend.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import achievers.ieps.frontend.dto.request.CreateKonfigurasiBerkasRequestDTO;
 import achievers.ieps.frontend.dto.response.KonfigurasiBerkasResponseDTO;
 import achievers.ieps.frontend.dto.response.KonfigurasiBerkasWrapperRespondeDTO;
+import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
 import achievers.ieps.frontend.restservice.KonfigurasiBerkasRestService;
+import achievers.ieps.frontend.restservice.UserRestService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
@@ -34,21 +37,34 @@ public class KonfigurasiBerkas {
     @Autowired
     KonfigurasiBerkasRestService konfigurasiBerkasRestService;
 
+    @Autowired
+    UserRestService userRestService;
+
     @GetMapping("/konfigurasi-berkas")
-    public String retrieveKonfigurasiBerkas(HttpServletRequest httprequest, Model model) throws JSONException{
+    public String retrieveKonfigurasiBerkas(HttpServletRequest httprequest, Model model) throws JSONException, IOException, InterruptedException{
         var token = httprequest.getSession().getAttribute("token").toString();
         List<KonfigurasiBerkasResponseDTO> lst = konfigurasiBerkasRestService.getAllKonfigurasiBerkas(token);
         model.addAttribute("lst", lst);
+
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var user = userRestService.viewProfile(tokenObj);
+        model.addAttribute("user", user);
         
         return "konfigurasi-berkas";
     }
 
     @GetMapping("/konfigurasi-berkas/edit")
-    public String editKonfigurasiBerkas(HttpServletRequest httprequest, Model model) throws JSONException{
+    public String editKonfigurasiBerkas(HttpServletRequest httprequest, Model model) throws JSONException, IOException, InterruptedException{
         var token = httprequest.getSession().getAttribute("token").toString();
     
         List<KonfigurasiBerkasResponseDTO> lst = konfigurasiBerkasRestService.getAllKonfigurasiBerkas(token);
         List<CreateKonfigurasiBerkasRequestDTO> lstNew = new ArrayList<>();
+
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var user = userRestService.viewProfile(tokenObj);
+        model.addAttribute("user", user);
 
         // Kalau kosong
         if(lst == null || lst.size() == 0){
@@ -73,8 +89,12 @@ public class KonfigurasiBerkas {
     }
 
     @PostMapping("/konfigurasi-berkas/edit")
-    public String saveKonfigurasiBerkas(@ModelAttribute KonfigurasiBerkasWrapperRespondeDTO kbrequest, RedirectAttributes redirectAttributes, HttpServletRequest httprequest, Model model, BindingResult bindingResult) throws JSONException {
-
+    public String saveKonfigurasiBerkas(@ModelAttribute KonfigurasiBerkasWrapperRespondeDTO kbrequest, 
+                                        RedirectAttributes redirectAttributes, 
+                                        HttpServletRequest httprequest, 
+                                        Model model, 
+                                        BindingResult bindingResult) throws JSONException, IOException, InterruptedException {
+        var token = httprequest.getSession().getAttribute("token").toString();
         // Handling nama sama
         if(kbrequest.getListKB() != null){
             Set<String> namaBerkasSet = new HashSet<>();
@@ -90,19 +110,26 @@ public class KonfigurasiBerkas {
                     errorMessages.add("Deskripsi berkas tidak boleh kosong");
                 }
                 if (dto.getDeskripsi().length() >= 200){
-                    errorMessages.add("Deskripsi lebih dari 200 kata");
+                    errorMessages.add("Deskripsi tidak lebih dari 200 kata");
                 }
                 namaBerkasSet.add(dto.getNamaBerkas().toLowerCase());
             }
             if(!errorMessages.isEmpty()){
                 model.addAttribute("errorMessages", errorMessages);
                 model.addAttribute("kbrequest", kbrequest);
+                LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+                tokenObj.setToken(token);
+                var user = userRestService.viewProfile(tokenObj);
+                model.addAttribute("user", user);
                 return "konfigurasi-berkas-form";
             }
         }
         
-        var token = httprequest.getSession().getAttribute("token").toString();
         konfigurasiBerkasRestService.addKonfigurasiBerkas(kbrequest.getListKB(), token);
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var user = userRestService.viewProfile(tokenObj);
+        model.addAttribute("user", user);
         List<KonfigurasiBerkasResponseDTO> lst = konfigurasiBerkasRestService.getAllKonfigurasiBerkas(token);
         konfigurasiBerkasRestService.addKonfigurasiBerkas(kbrequest.getListKB(), token);
         redirectAttributes.addFlashAttribute("successMessage", "Konfigurasi berkas Anda berhasil disimpan.");
@@ -110,9 +137,15 @@ public class KonfigurasiBerkas {
     }
 
     @PostMapping(value="/konfigurasi-berkas/edit", params ={"addRow"})
-    public String addRowKonfigurasiBerkas(@ModelAttribute KonfigurasiBerkasWrapperRespondeDTO kbrequest, HttpServletRequest httprequest, Model model) throws JSONException{
+    public String addRowKonfigurasiBerkas(@ModelAttribute KonfigurasiBerkasWrapperRespondeDTO kbrequest, 
+                                        HttpServletRequest httprequest, 
+                                        Model model) throws JSONException, IOException, InterruptedException{
         var token = httprequest.getSession().getAttribute("token").toString();
-
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var user = userRestService.viewProfile(tokenObj);
+        model.addAttribute("user", user);
+        
         // Kalau kosong
         if(kbrequest.getListKB() == null || kbrequest.getListKB().size() == 0){
             kbrequest.setListKB(new ArrayList<>());
@@ -120,6 +153,7 @@ public class KonfigurasiBerkas {
         // Maksimum 5 file
         if (kbrequest.getListKB().size() == 5){
             model.addAttribute("kbrequest", kbrequest);
+            
             return "konfigurasi-berkas-form";
         }
 
@@ -131,8 +165,12 @@ public class KonfigurasiBerkas {
     }
 
     @PostMapping(value="/konfigurasi-berkas/edit", params ={"deleteRow"})
-    public String deleteRowKonfigurasiBerkas(@ModelAttribute KonfigurasiBerkasWrapperRespondeDTO kbrequest, @RequestParam("deleteRow") int row, HttpServletRequest httprequest, Model model) throws JSONException{
+    public String deleteRowKonfigurasiBerkas(@ModelAttribute KonfigurasiBerkasWrapperRespondeDTO kbrequest, @RequestParam("deleteRow") int row, HttpServletRequest httprequest, Model model) throws JSONException, IOException, InterruptedException{
         var token = httprequest.getSession().getAttribute("token").toString();
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var user = userRestService.viewProfile(tokenObj);
+        model.addAttribute("user", user);
         kbrequest.getListKB().remove(row);
         model.addAttribute("kbrequest", kbrequest);
         return "konfigurasi-berkas-form";
