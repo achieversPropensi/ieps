@@ -32,6 +32,7 @@
           <span id="currentDate"></span>
         </div>
       </li>
+      <br>
 
       <br>
       <!-- Vendor : Penawaran  -->
@@ -81,8 +82,10 @@
                alt="Vendor Avatar"
                id="admin-avatar">
           <div id="profil-content">
-            <span id="name" th:text="${vendor.nama}"></span>
-            <span id="role">Vendor</span>
+            <a href="/profile/view">
+              <span id="name" th:text="${vendor.nama}"></span>
+              <span id="role">Vendor</span>
+            </a>
           </div>
         </div>
       </div>

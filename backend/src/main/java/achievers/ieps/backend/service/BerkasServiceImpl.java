@@ -66,7 +66,7 @@ public class BerkasServiceImpl implements BerkasService {
     public Berkas edit(UpdateBerkasRequestDTO updateBerkasRequestDTO) {
         var email = jwtUtils.getEmailFromJwtToken(updateBerkasRequestDTO.getToken());
         Vendor vendor = (Vendor) userDb.findByEmail(email);
-
+        System.out.println(vendor.getId()); System.out.println(updateBerkasRequestDTO.getId());
         var berkasExisting = berkasDb.findByVendorIdAndId(
                 vendor.getId(), updateBerkasRequestDTO.getId());
 
