@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -14,6 +16,14 @@
     <link href="/assets/css/style.css" rel="stylesheet">
 
     <style>
+        .wider{
+            min-width: 150px;
+        }
+
+        .pagetitle .icon {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         .wider{
             min-width: 150px;
         }
@@ -97,7 +107,6 @@
 
                     </div>
                 </div>
-
             </div>
         </div>
         <div class="modal" id="alertModalGagal" tabindex="-1">
@@ -113,7 +122,7 @@
                         ></button>
                     </div>
                     <div class="modal-body">
-                        <p>Silahkan periksa kesesuaian dan kelengkapan dokumen assessment kembali!</p>
+                        <p>Anda sudah mengunggah berkas. Silahkan periksa kesesuaian dan kelengkapan dokumen assessment kembali!</p>
                     </div>
                 </div>
             </div>
@@ -131,7 +140,7 @@
                         ></button>
                     </div>
                     <div class="modal-body">
-                        <p>Anda sudah mengunggah berkas. Mohon menunggu proses verifikasi dari kami.</p>
+                        <p>Anda sudah berhasil mengunggah berkas. Mohon menunggu proses verifikasi dari kami.</p>
                     </div>
                 </div>
             </div>
@@ -157,5 +166,6 @@
 </script>
 
 </body>
+
 
 </html>

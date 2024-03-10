@@ -4,6 +4,7 @@ import achievers.ieps.frontend.dto.request.*;
 import achievers.ieps.frontend.dto.response.BerkasInfoResponseDTO;
 import achievers.ieps.frontend.dto.response.KonfigurasiBerkasResponseDTO;
 import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
+import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
 import achievers.ieps.frontend.restservice.BerkasRestService;
 import achievers.ieps.frontend.restservice.UserRestService;
 import achievers.ieps.frontend.restservice.VendorRestService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -36,6 +38,7 @@ public class BerkasController {
     @GetMapping("/vendor-assessment")
     public String vendorAssessment(HttpServletRequest request, Model model) throws IOException, InterruptedException {
         var token = request.getSession().getAttribute("token").toString();
+
 
         var check = vendorRestService.checkInfo(token);
         model.addAttribute("vendorInfo", check);
@@ -96,7 +99,10 @@ public class BerkasController {
 
         var check = vendorRestService.checkInfo(token);
         model.addAttribute("vendorInfo", check);
-        System.out.println("Masuk sini ya...");
+
+        var user = userRestService.viewProfile(new LoginJwtResponseDTO(token));
+        model.addAttribute("vendor", user);
+
         if (bindingResult.hasErrors()){
             for (FieldError error : bindingResult.getFieldErrors()) {
                 errorMessages.add(error.getDefaultMessage());
@@ -122,6 +128,7 @@ public class BerkasController {
             return "form-va.html";
         }
 
+
         for (UploadBerkasDTO berkasDTO: uploadBerkasFormDTO.getListBerkas()) {
             var createBerkasDTO = new CreateBerkasRequestDTO();
             createBerkasDTO.setNama(berkasDTO.getNama());
@@ -129,8 +136,8 @@ public class BerkasController {
             createBerkasDTO.setJudul(berkasDTO.getFile().getOriginalFilename());
             createBerkasDTO.setType(berkasDTO.getFile().getContentType());
             createBerkasDTO.setData(berkasDTO.getFile().getBytes());
+            createBerkasDTO.setSize(berkasDTO.getFile().getSize());
             createBerkasDTO.setToken(token);
-
 
             var output = berkasRestService.uploadBerkas(token, createBerkasDTO);
 
@@ -147,6 +154,7 @@ public class BerkasController {
                 for (KonfigurasiBerkasResponseDTO konfigurasi : listKonfigurasi) {
                     UploadBerkasDTO berkas = new UploadBerkasDTO();
                     berkas.setNama(konfigurasi.getNamaBerkas());
+                    berkas.setDeskripsi(konfigurasi.getDeskripsi());
                     berkas.setDeskripsi(konfigurasi.getDeskripsi());
                     listBerkas.add(berkas);
                 }
@@ -203,13 +211,16 @@ public class BerkasController {
     public String vaEditSubmit(HttpServletRequest request,
                            @Valid @ModelAttribute UpdateBerkasFormDTO updateBerkasFormDTO,
                            BindingResult bindingResult, Model model)
-            throws IOException, InterruptedException, JSONException {
+            throws IOException, InterruptedException {
 
         var token = request.getSession().getAttribute("token").toString();
         List<String> errorMessages = new ArrayList<>();
 
         var check = vendorRestService.checkInfo(token);
         model.addAttribute("vendorInfo", check);
+
+        var user = userRestService.viewProfile(new LoginJwtResponseDTO(token));
+        model.addAttribute("vendor", user);
 
         if (bindingResult.hasErrors()){
             for (FieldError error : bindingResult.getFieldErrors()) {
@@ -246,6 +257,7 @@ public class BerkasController {
             updateBerkasDTO.setJudul(berkasDTO.getFile().getOriginalFilename());
             updateBerkasDTO.setType(berkasDTO.getFile().getContentType());
             updateBerkasDTO.setData(berkasDTO.getFile().getBytes());
+            updateBerkasDTO.setSize(berkasDTO.getFile().getSize());
             updateBerkasDTO.setToken(token);
 
             var output = berkasRestService.updateBerkas(token, updateBerkasDTO);

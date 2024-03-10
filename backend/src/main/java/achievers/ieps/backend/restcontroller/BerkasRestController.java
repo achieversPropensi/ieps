@@ -26,7 +26,11 @@ public class BerkasRestController {
     public ResponseEntity<Map<String, String>> uploadFile(
             @RequestBody CreateBerkasRequestDTO createBerkasRequestDTO) {
         Map<String, String> response = new HashMap<>();
-        System.out.println(createBerkasRequestDTO.getData().length);
+
+        if (createBerkasRequestDTO.getSize() > 5 * 1024 * 1024) {
+            response.put(ERRORSTATUS, "Berkas "+ createBerkasRequestDTO.getNama() + " melebihi batas maksimal 5MB!");
+            return ResponseEntity.ok().body(response);
+        }
         if (createBerkasRequestDTO.getData().length == 0) {
             berkasService.deleteBerkasVendor(createBerkasRequestDTO.getToken());
             response.put(ERRORSTATUS, "Berkas "+ createBerkasRequestDTO.getNama() + " tidak boleh kosong!");
@@ -99,11 +103,16 @@ public class BerkasRestController {
             @RequestBody UpdateBerkasRequestDTO updateBerkasRequestDTO) {
         Map<String, String> response = new HashMap<>();
 
+        if (updateBerkasRequestDTO.getSize() > 5 * 1024 * 1024) {
+            response.put(ERRORSTATUS, "Berkas "+ updateBerkasRequestDTO.getNama() + " melebihi batas maksimal 5MB!");
+            return ResponseEntity.ok().body(response);
+        }
         if (updateBerkasRequestDTO.getData().length == 0) {
             response.put(ERRORSTATUS, "Berkas "+ updateBerkasRequestDTO.getNama() + " tidak boleh kosong!");
             return ResponseEntity.ok().body(response);
         }
         if (!Objects.equals(updateBerkasRequestDTO.getType(), MediaType.APPLICATION_PDF_VALUE)) {
+            response.put(ERRORSTATUS, "Mohon unggah kembali berkas "+ updateBerkasRequestDTO.getNama() + " dalam format PDF!");
             response.put(ERRORSTATUS, "Mohon unggah kembali berkas "+ updateBerkasRequestDTO.getNama() + " dalam format PDF!");
             return ResponseEntity.ok().body(response);
         }
