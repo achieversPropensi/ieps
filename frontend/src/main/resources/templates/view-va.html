@@ -1,135 +1,161 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
-    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-        * {
-          font-family: "Poppins", sans-serif;
-        }
+    <object th:include="~{fragments/commonfauzan :: css}" th:remove="tag"></object>
+    <object th:include="~{fragments/commonfauzan :: js}" th:remove="tag"></object>
 
-        /* Split the screen in half */
-        .split {
-          height: 100%;
-          width: 50%;
-          position: fixed;
-          z-index: 1;
-          top: 0;
-          overflow-x: hidden;
-          padding-top: 20px;
-        }
-
-        /* Control the left side */
-        .left {
-          left: 0;
-          background-color: grey;
-          background-image: url('https://github.com/pudhiil/cobacoba/assets/94066150/b7cf0c25-09db-4a3f-9f92-27b448acf64b');
-          background-size: cover;
-          /* Menyesuaikan ukuran gambar dengan proporsi */
-          background-position: center;
-          /* Menempatkan gambar di tengah */
-        }
-
-        /* Control the right side */
-        .right {
-          right: 0;
-        }
-
-        /* If you want the content centered horizontally and vertically */
-        .centered {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-
-        /* Style for the submit button */
-        .form-group a {
-          width: 100%;
-          text-align: center;
-        }
-
-        /* Style for the button inside the form-group */
-        .form-group button {
-          width: 100%;
-        }
-
-        /* Style for the "Belum punya akun?" text */
-        .registration-text {
-          text-align: center;
-        }
-    </style>
     <title>Vendor Assessment</title>
-</head>
-<body>
-<div class="container">
-    <div class="text-center pt-5">
-        <h2></h2>
-    </div>
-    <br>
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h3>Berkas</h3>
-            <h4>
-                <span th:if="${vendorInfo.status == 'Belum Terverifikasi'}" class="badge bg-secondary">Belum Terverifikasi</span>
-                <span th:if="${vendorInfo.status == 'Gagal Terverifikasi'}" class="badge bg-danger">Gagal Terverifikasi</span>
-                <span th:if="${vendorInfo.status == 'Sudah Terverifikasi'}" class="badge bg-success">Sudah Terverifikasi</span>
-            </h4>
-             </div>
-        <div class="card-body">
-            <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
-                <table class="table display table-bordered table-hover" style="width:100%">
-                    <thead class="table-dark">
-                    <tr style="text-align: center">
-                        <th>No</th>
-                        <th>Nama Berkas</th>
-                        <th>Upload Berkas</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="berkas, iterationStatus : ${listBerkas}">
-                        <td th:text="${iterationStatus.count}"></td>
-                        <td th:text="${berkas.nama}"></td>
-                        <td>
-                            <a th:href="${berkas.url}" th:text="${berkas.judul}" target="_blank"></a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            <div th:if="${vendorInfo.status == 'Gagal Terverifikasi'}" class="text-center m-3">
-                <a class="btn btn-dark"
-                        th:href="@{/vendor-assessment/edit}">Ubah</a>
-            </div>
 
-        </div>
+    <!-- Template Main CSS File -->
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+    <style>
+        .wider{
+            min-width: 150px;
+        }
+
+        .pagetitle .icon {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<main id="main" class="main">
+
+    <nav th:replace="~{fragments/navbar-vendor :: navbar(activeTab)}"></nav>
+
+    <div class="pagetitle d-flex justify-content-between align-items-center">
+        <h1>Vendor Assessment</h1>
     </div>
-    <div class="modal" id="alertModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Perhatian</h5>
-                    <button
-                            type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"
-                    ></button>
+
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">Berkas diunggah vendor untuk kemudian divalidasi atau diverifikasi perusahaan</li>
+        </ol>
+    </nav>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body">
+                        <div style="position: absolute; top: 20px; right: 20px; margin-right: 20px">
+                            <!-- Jika status adalah "Belum Terverifikasi" -->
+                            <th:block th:if="${vendorInfo.status == 'Belum Terverifikasi'}">
+                                <button type="button" class="btn btn-warning" disabled>Menunggu Verifikasi</button>
+                            </th:block>
+
+                            <!-- Jika status adalah "Gagal Terverifikasi" -->
+                            <th:block th:if="${vendorInfo.status == 'Gagal Terverifikasi'}">
+                                <button type="button" class="btn btn-danger" disabled>Gagal Terverifikasi</button>
+                            </th:block>
+
+                            <!-- Jika status adalah "Sudah Terverifikasi" -->
+                            <th:block th:if="${vendorInfo.status == 'Sudah Terverifikasi'}">
+                                <button type="button" class="btn btn-success" disabled>Sudah Terverifikasi</button>
+                            </th:block>
+                        </div>
+
+                        <h5 class="card-title">Daftar Berkas</h5>
+
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Nomor</th>
+                                <th>Nama Berkas</th>
+                                <th>Deskripsi Berkas</th>
+                                <th>Berkas</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Iterasi melalui daftar berkas -->
+                            <tr th:each="berkas, iterationStatus : ${listBerkas}">
+                                <td th:text="${iterationStatus.count}"></td>
+                                <td th:text="${berkas.nama}"></td>
+                                <td th:text="${berkas.deskripsi}"></td>
+                                <td>
+                                    <a th:href="${berkas.url}" th:text="${berkas.judul}" target="_blank"></a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div th:if="${vendorInfo.status == 'Gagal Terverifikasi'}" class="text-center">
+                            <a th:href="@{/vendor-assessment/edit}" class="btn btn-dark">Ubah</a>
+                        </div>
+
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <p>Silahkan periksa kesesuaian dan kelengkapan dokumen assessment kembali!</p>
+
+            </div>
+        </div>
+        <div class="modal" id="alertModalGagal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Perhatian</h5>
+                        <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Silahkan periksa kesesuaian dan kelengkapan dokumen assessment kembali!</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <script th:if="${vendorInfo.status == 'Gagal Terverifikasi'}">
-        document.addEventListener('DOMContentLoaded', function () {
-            var modal = new bootstrap.Modal(document.getElementById('alertModal'));
-            modal.show();
-        });
-    </script>
-</div>
+        <div class="modal" id="alertModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Perhatian</h5>
+                        <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Anda sudah mengunggah berkas. Mohon menunggu proses verifikasi dari kami.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<script th:if="${vendorInfo.status == 'Gagal Terverifikasi'}">
+    document.addEventListener('DOMContentLoaded', function () {
+        var modal = new bootstrap.Modal(document.getElementById('alertModalGagal'));
+        modal.show();
+    });
+</script>
+
+<script th:if="${vendorInfo.hasSubmitted and vendorInfo.status == 'Belum Terverifikasi'}">
+    document.addEventListener('DOMContentLoaded', function () {
+        var modal = new bootstrap.Modal(document.getElementById('alertModal'));
+        modal.show();
+    });
+</script>
+
 </body>
+
 </html>

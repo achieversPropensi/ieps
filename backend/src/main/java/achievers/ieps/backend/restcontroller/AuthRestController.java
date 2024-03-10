@@ -3,6 +3,7 @@ package achievers.ieps.backend.restcontroller;
 import achievers.ieps.backend.dto.UserMapper;
 import achievers.ieps.backend.dto.request.LoginJwtRequestDTO;
 import achievers.ieps.backend.dto.response.LoginJwtResponseDTO;
+import achievers.ieps.backend.security.jwt.JwtUtils;
 import achievers.ieps.backend.service.RoleService;
 import achievers.ieps.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class AuthRestController {
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @Autowired
     private UserService userService;
@@ -39,6 +43,14 @@ public class AuthRestController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @PostMapping("/auth/token")
+    public ResponseEntity<LoginJwtResponseDTO> token(@RequestBody LoginJwtRequestDTO loginJwtRequestDTO) {
+        if (loginJwtRequestDTO != null) {
+            return ResponseEntity.ok(new LoginJwtResponseDTO(jwtUtils.generateJwtToken(loginJwtRequestDTO.getEmail())));
+        }
+        return null;
     }
 }
 

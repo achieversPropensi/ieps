@@ -2,7 +2,9 @@ package achievers.ieps.frontend.restservice;
 
 import achievers.ieps.frontend.dto.request.CreateVendorRequestDTO;
 import achievers.ieps.frontend.dto.request.LoginJwtRequestDTO;
+import achievers.ieps.frontend.dto.request.PasswordRequestDTO;
 import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
+import achievers.ieps.frontend.dto.response.UserModelResponseDTO;
 import achievers.ieps.frontend.dto.response.VendorResponseDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,9 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.apache.http.HttpHeaders;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -210,5 +210,123 @@ public class UserRestServiceImpl implements UserRestService {
         ObjectMapper objectMapper = new ObjectMapper();
         VendorResponseDTO vendor = objectMapper.readValue(body, new TypeReference<VendorResponseDTO>(){});
         return vendor;
+    }
+
+    @Override
+    public UserModelResponseDTO viewProfile(LoginJwtResponseDTO token) throws IOException, InterruptedException{
+        var response = this.webClient
+                .post()
+                .uri("user/profile")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token.getToken())
+                .bodyValue(token)
+                .retrieve()
+                .bodyToMono(UserModelResponseDTO.class)
+                .block();
+        return response;
+    }
+
+    @Override
+    public UserModelResponseDTO updateProfilePassword(PasswordRequestDTO passwordRequestDTO, String token) throws IOException, InterruptedException{
+        var response = this.webClient
+                .put()
+                .uri("user/profile/edit/password")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .bodyValue(passwordRequestDTO)
+                .retrieve()
+                .bodyToMono(UserModelResponseDTO.class)
+                .block();
+        return response;
+    }
+
+    @Override
+    public UserModelResponseDTO updateProfile(HttpServletRequest request, UserModelResponseDTO userModelResponseDTO, String token) throws IOException, InterruptedException{
+        updateSession(userModelResponseDTO.getStatus(), userModelResponseDTO.getRole(), userModelResponseDTO.getEmail(), userModelResponseDTO.getPassword(), token, request);
+        var response = this.webClient
+                .put()
+                .uri("user/profile/edit")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .bodyValue(userModelResponseDTO)
+                .retrieve()
+                .bodyToMono(UserModelResponseDTO.class)
+                .block();
+        return response;
+    }
+
+    @Override
+    public void updateSession(String status, String role, String email, String password, String tokenDTO, HttpServletRequest httprequest) throws IOException, InterruptedException {
+        WebClient client = WebClient.create("http://localhost:8080");
+        LoginJwtRequestDTO loginDTO = new LoginJwtRequestDTO(email, password);
+        LoginJwtResponseDTO token = client.post()
+                .uri("/api/auth/token")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDTO)
+                .bodyValue(loginDTO)
+                .retrieve()
+                .bodyToMono(LoginJwtResponseDTO.class)
+                .block();
+        assert token != null;
+        if (role.equals("Vendor")){
+            if (status.equals("Belum Terverifikasi") || status.equals("Gagal Terverifikasi")){
+                List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("VENDOR_NOT_VALID"));
+                Authentication authentication = new UsernamePasswordAuthenticationToken(email, "VENDOR_NOT_VALID", authorities);
+                SecurityContext securityContext = SecurityContextHolder.getContext();
+                securityContext.setAuthentication(authentication);
+                HttpSession httpSession = httprequest.getSession(false);
+                if (httpSession != null) {
+                    httpSession.invalidate();
+                }
+                httpSession = httprequest.getSession(true);
+                httpSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+                httpSession.setAttribute("token", token.getToken());
+
+            } else {
+                List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("VENDOR"));
+                Authentication authentication = new UsernamePasswordAuthenticationToken(email, "VENDOR", authorities);
+                SecurityContext securityContext = SecurityContextHolder.getContext();
+                securityContext.setAuthentication(authentication);
+                HttpSession httpSession = httprequest.getSession(false);
+                if (httpSession != null) {
+                    httpSession.invalidate();
+                }
+                httpSession = httprequest.getSession(true);
+                httpSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+                httpSession.setAttribute("token", token.getToken());
+            }
+        } else if (role.equals("Admin")){
+            List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ADMIN"));
+            Authentication authentication = new UsernamePasswordAuthenticationToken(email, "ADMIN", authorities);
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            securityContext.setAuthentication(authentication);
+            HttpSession httpSession = httprequest.getSession(false);
+            if (httpSession != null) {
+                httpSession.invalidate();
+            }
+            httpSession = httprequest.getSession(true);
+            httpSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+            httpSession.setAttribute("token", token.getToken());
+        } else if (role.equals("Procurement Staff")){
+            List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("PROCSTAFF"));
+            Authentication authentication = new UsernamePasswordAuthenticationToken(email, "PROCSTAFF", authorities);
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            securityContext.setAuthentication(authentication);
+            HttpSession httpSession = httprequest.getSession(false);
+            if (httpSession != null) {
+                httpSession.invalidate();
+            }
+            httpSession = httprequest.getSession(true);
+            httpSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+            httpSession.setAttribute("token", token.getToken());
+        } else if (role.equals("Procurement Manager")){
+            List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("PROCMANAGER"));
+            Authentication authentication = new UsernamePasswordAuthenticationToken(email, "PROCMANAGER", authorities);
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            securityContext.setAuthentication(authentication);
+            HttpSession httpSession = httprequest.getSession(false);
+            if (httpSession != null) {
+                httpSession.invalidate();
+            }
+            httpSession = httprequest.getSession(true);
+            httpSession.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+            httpSession.setAttribute("token", token.getToken());
+        }
     }
 }

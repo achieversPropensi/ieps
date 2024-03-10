@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://thymeleaf.org"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <object
+      th:include="~{fragments/commonfauzan :: css}"
+      th:remove="tag"
+    ></object>
+    <title>Profil Vendor</title>
+
+    <!-- Template Main CSS File -->
+    <link href="/assets/css/style.css" rel="stylesheet" />
+
+    <style>
+      .wider {
+        min-width: 150px;
+      }
+
+      .pagetitle .icon {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main id="main" class="main">
+      <nav th:if="${user.role == 'Admin'}" th:replace="~{fragments/navbar-admin :: navbar(activeTab)}"></nav>
+        <nav th:if="${user.role == 'Procurement Manager'}" th:replace="~{fragments/navbar-procm :: navbar(activeTab)}"></nav>
+        <nav th:if="${user.role == 'Procurement Staff'}" th:replace="~{fragments/navbar-procs :: navbar(activeTab)}"></nav>
+        
+      <div class="pagetitle d-flex justify-content-between align-items-center">
+        <div class="icon">
+          <h1>Ubah Profil</h1>
+        </div>
+      </div>
+      <!-- End Page Title -->
+
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">Ubah Profil Vendor.</li>
+        </ol>
+      </nav>
+      <div
+        class="alert alert-primary"
+        role="alert"
+        th:text="${success}"
+        th:if="${success}"
+      ></div>
+      <div
+        class="alert alert-danger"
+        th:if="${error}"
+        th:each="errorMessage : ${error}"
+        th:text="${errorMessage}"
+      ></div>
+      <section class="section">
+        <div class="row mb-3">
+          <div class="col-lg-12">
+            <div class="card">
+              <div class="card-body">
+                <form
+                  th:action="@{/profile/edit}"
+                  th:object="${vendor}"
+                  method="POST"
+                  id="registrationForm"
+                >
+                  <div
+                    class="tab-pane fade show active profile-overview"
+                    id="profile-overview"
+                  >
+                    <div
+                      style="
+                        position: absolute;
+                        top: 20px;
+                        right: 20px;
+                        margin-right: 20px;
+                      "
+                    >
+                      <!-- Jika status adalah "Belum Terverifikasi" -->
+                      <th:block th:if="*{status == 'Belum Terverifikasi'}">
+                        <button type="button" class="btn btn-warning" disabled>
+                          Belum Terverifikasi
+                        </button>
+                      </th:block>
+
+                      <!-- Jika status adalah "Gagal Terverifikasi" -->
+                      <th:block th:if="*{status == 'Gagal Terverifikasi'}">
+                        <button type="button" class="btn btn-danger" disabled>
+                          Gagal Terverifikasi
+                        </button>
+                      </th:block>
+
+                      <!-- Jika status adalah "Sudah Terverifikasi" -->
+                      <th:block th:if="*{status == 'Sudah Terverifikasi'}">
+                        <button type="button" class="btn btn-success" disabled>
+                          Sudah Terverifikasi
+                        </button>
+                      </th:block>
+                    </div>
+
+                    <div class="card-title" style="margin-left: 20px">
+                      Profil Pengguna
+                    </div>
+
+                    <div class="row">
+                      <div
+                        class="col-lg-4 col-md-4 label text-bold text-primary"
+                      >
+                        ID
+                      </div>
+                      <div
+                        class="col-lg-4 col-md-4 label text-bold text-primary"
+                      >
+                        Role
+                      </div>
+                      <div
+                        class="col-lg-4 col-md-4 label text-bold text-primary"
+                      >
+                        Perusahaan
+                      </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 20px">
+                      <input type="hidden" th:field="*{password}" />
+                      <input type="hidden" th:field="*{status}" />
+                      <div class="col-lg-4 col-md-4" th:text="*{id}"></div>
+                      <input type="hidden" th:field="*{id}" />
+                      <div class="col-lg-4 col-md-4" th:text="*{role}"></div>
+                      <input type="hidden" th:field="*{role}" />
+                      <input
+                        class="col-lg-4 col-md-4"
+                        type="text"
+                        th:field="*{namaPerusahaan}"
+                        required
+                      />
+                    </div>
+
+                    <div class="row">
+                      <div
+                        class="col-lg-4 col-md-4 label text-bold text-primary"
+                      >
+                        Nama
+                      </div>
+                      <div
+                        class="col-lg-4 col-md-4 label text-bold text-primary"
+                      >
+                        Email
+                      </div>
+                      <div
+                        class="col-lg-4 col-md-4 label text-bold text-primary"
+                      >
+                        Telepon
+                      </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 20px">
+                      <input
+                        class="col-lg-4 col-md-4"
+                        type="text"
+                        th:field="*{nama}"
+                        required
+                      />
+                      <input
+                        class="col-lg-4 col-md-4"
+                        type="text"
+                        th:field="*{email}"
+                        required
+                      />
+                      <input
+                        class="col-lg-4 col-md-4"
+                        type="text"
+                        th:field="*{nomorTelefon}"
+                        required
+                      />
+                    </div>
+
+                    <div class="row">
+                      <div
+                        class="col-lg-4 col-md-4 label text-bold text-primary"
+                      >
+                        Alamat
+                      </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 20px">
+                      <input
+                        class="col-lg-4 col-md-4"
+                        type="text"
+                        th:field="*{alamat}"
+                        required
+                      />
+                    </div>
+
+                    <div class="row mt-4 d-flex justify-content-center">
+                      <div class="col-lg-6 col-md-6 text-center">
+                        <br />
+                        <div>
+                          <a class="btn btn-danger" th:href="@{/profile/view}">
+                            Batal
+                        </a>
+                          <button
+                            class="btn btn-primary"
+                            id="showModalBtn"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="modal" id="confirmationModal" tabindex="-1">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title">
+                              Konfirmasi Perubahan Data
+                            </h5>
+                            <button
+                              type="button"
+                              class="btn-close"
+                              data-bs-dismiss="modal"
+                              aria-label="Close"
+                            ></button>
+                          </div>
+                          <div class="modal-body">
+                            <div>
+                              Apakah Anda yakin untuk menyimpan perubahan data
+                              ini?
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button
+                              type="button"
+                              class="btn btn-danger"
+                              data-bs-dismiss="modal"
+                            >
+                              Tidak
+                            </button>
+                            <button
+                              type="submit"
+                              class="btn btn-primary"
+                              id="confirmSubmitBtn"
+                            >
+                              Submit
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- End #main -->
+    <object
+      th:include="~{fragments/commonfauzan :: js}"
+      th:remove="tag"
+    ></object>
+    <script>
+      document
+        .getElementById("showModalBtn")
+        .addEventListener("click", function (event) {
+          event.preventDefault();
+          var modal = new bootstrap.Modal(
+            document.getElementById("confirmationModal")
+          );
+          modal.show();
+        });
+
+      document
+        .getElementById("confirmSubmitBtn")
+        .addEventListener("click", function () {
+          document.getElementById("registrationForm").submit();
+        });
+    </script>
+  </body>
+</html>

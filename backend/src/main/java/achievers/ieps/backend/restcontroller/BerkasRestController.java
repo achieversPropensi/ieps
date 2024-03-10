@@ -8,7 +8,6 @@ import achievers.ieps.backend.service.BerkasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.*;
@@ -27,9 +26,15 @@ public class BerkasRestController {
     public ResponseEntity<Map<String, String>> uploadFile(
             @RequestBody CreateBerkasRequestDTO createBerkasRequestDTO) {
         Map<String, String> response = new HashMap<>();
-
+        System.out.println(createBerkasRequestDTO.getData().length);
+        if (createBerkasRequestDTO.getData().length == 0) {
+            berkasService.deleteBerkasVendor(createBerkasRequestDTO.getToken());
+            response.put(ERRORSTATUS, "Berkas "+ createBerkasRequestDTO.getNama() + " tidak boleh kosong!");
+            return ResponseEntity.ok().body(response);
+        }
         if (!Objects.equals(createBerkasRequestDTO.getType(), MediaType.APPLICATION_PDF_VALUE)) {
-            response.put(ERRORSTATUS, "Mohon unggah berkas "+ createBerkasRequestDTO.getNama() + " dalam format PDF!");
+            berkasService.deleteBerkasVendor(createBerkasRequestDTO.getToken());
+            response.put(ERRORSTATUS, "Mohon unggah kembali berkas "+ createBerkasRequestDTO.getNama() + " dalam format PDF!");
             return ResponseEntity.ok().body(response);
         }
         try {
@@ -60,6 +65,7 @@ public class BerkasRestController {
             return new BerkasResponseDTO(
                     berkas.getId(),
                     berkas.getNama(),
+                    berkas.getDeskripsi(),
                     berkas.getJudul(),
                     fileDownloadUri,
                     berkas.getType());
@@ -93,8 +99,12 @@ public class BerkasRestController {
             @RequestBody UpdateBerkasRequestDTO updateBerkasRequestDTO) {
         Map<String, String> response = new HashMap<>();
 
+        if (updateBerkasRequestDTO.getData().length == 0) {
+            response.put(ERRORSTATUS, "Berkas "+ updateBerkasRequestDTO.getNama() + " tidak boleh kosong!");
+            return ResponseEntity.ok().body(response);
+        }
         if (!Objects.equals(updateBerkasRequestDTO.getType(), MediaType.APPLICATION_PDF_VALUE)) {
-            response.put(ERRORSTATUS, "Mohon unggah berkas "+ updateBerkasRequestDTO.getNama() + " dalam format PDF!");
+            response.put(ERRORSTATUS, "Mohon unggah kembali berkas "+ updateBerkasRequestDTO.getNama() + " dalam format PDF!");
             return ResponseEntity.ok().body(response);
         }
         try {

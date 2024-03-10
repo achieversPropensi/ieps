@@ -3,16 +3,17 @@ package achievers.ieps.backend.restcontroller;
 import achievers.ieps.backend.dto.UserMapper;
 import achievers.ieps.backend.dto.request.CreateUserRequestDTO;
 import achievers.ieps.backend.dto.request.CreateVendorRequestDTO;
-import achievers.ieps.backend.dto.request.LoginJwtRequestDTO;
+import achievers.ieps.backend.dto.request.PasswordRequestDTO;
 import achievers.ieps.backend.dto.response.CreateUserResponseDTO;
 import achievers.ieps.backend.dto.response.LoginJwtResponseDTO;
+import achievers.ieps.backend.dto.response.UserModelResponseDTO;
 import achievers.ieps.backend.dto.response.VendorResponseDTO;
-import achievers.ieps.backend.model.Role;
 import achievers.ieps.backend.model.UserModel;
 import achievers.ieps.backend.model.Vendor;
 import achievers.ieps.backend.security.jwt.JwtUtils;
 import achievers.ieps.backend.service.UserService;
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/api/user")
@@ -105,5 +109,43 @@ public class UserRestController {
                 return userService.addUser(user, vendorDTO);
             }
         }
+    }
+
+    // PBI-6 (R)
+    @PostMapping(value="/profile")
+    public UserModelResponseDTO viewProfile(@RequestBody LoginJwtResponseDTO tokenDTO){
+        String email = jwtUtils.getEmailFromJwtToken(tokenDTO.getToken());
+        var user = userService.getUserByEmail(email);
+        return user;
+    }
+
+    // PBI-6 (U) Password (Blm dihandle)
+    @PutMapping(value="/profile/edit/password")
+    public UserModelResponseDTO updateProfilePassword(@RequestBody PasswordRequestDTO passwordRequestDTO) {
+        return userService.updatePasswordUser(passwordRequestDTO.getEmail(), passwordRequestDTO.getPasswordBaru(), passwordRequestDTO.getPasswordBaruKonfirmasi());
+    } 
+
+    // PBI-6 (U) Blm dihandle
+    @PutMapping(value="/profile/edit")
+    public UserModelResponseDTO updateProfile(@RequestBody UserModelResponseDTO userModelResponseDTO) {
+        var user = userService.updateUser(userModelResponseDTO);
+        if (user != null){
+            UserModelResponseDTO userDTO = new UserModelResponseDTO();
+            userDTO.setId(String.valueOf(user.getId()));
+            userDTO.setNama(user.getNama());
+            userDTO.setRole(user.getRole().getRole());
+            userDTO.setNomorTelefon(user.getNomorTelefon());
+            userDTO.setPassword(user.getPassword());
+            userDTO.setEmail(user.getEmail());
+
+            if (user instanceof Vendor){
+                Vendor vendor = (Vendor) user;
+                userDTO.setStatus(vendor.getStatus());
+                userDTO.setAlamat(vendor.getAlamat());
+                userDTO.setNamaPerusahaan(vendor.getNamaPerusahaan());
+            }
+            return userDTO;
+        }
+        return null;
     }
 }

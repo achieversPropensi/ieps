@@ -1,7 +1,6 @@
 package achievers.ieps.frontend.restservice;
 
 import achievers.ieps.frontend.dto.request.CreateBerkasRequestDTO;
-import achievers.ieps.frontend.dto.request.UploadBerkasDTO;
 import achievers.ieps.frontend.dto.response.BerkasInfoResponseDTO;
 import achievers.ieps.frontend.dto.response.KonfigurasiBerkasResponseDTO;
 import jakarta.transaction.Transactional;
@@ -9,9 +8,7 @@ import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
@@ -102,5 +99,18 @@ public class BerkasRestServiceImpl implements BerkasRestService {
         return response;
     };
 
+    @Override
+    public List<BerkasInfoResponseDTO> retrieveAllBerkasById(String token, String id) {
+        var response = this.webClient
+                .get()
+                .uri("/berkas/" + id)
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference
+                        <List<BerkasInfoResponseDTO>>() {})
+                .block();
+
+        return response;
+    };
 
 }

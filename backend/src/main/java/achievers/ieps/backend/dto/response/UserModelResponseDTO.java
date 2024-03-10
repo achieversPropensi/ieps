@@ -1,6 +1,5 @@
 package achievers.ieps.backend.dto.response;
 
-import achievers.ieps.backend.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,4 +20,5 @@ public class UserModelResponseDTO {
     private String alamat;
     private String namaPerusahaan;
     private String status;
+    private String emailToken;
 }

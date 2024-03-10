@@ -1,5 +1,4 @@
 package achievers.ieps.backend.model;
-import java.util.UUID;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

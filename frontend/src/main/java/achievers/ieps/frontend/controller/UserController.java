@@ -2,7 +2,10 @@ package achievers.ieps.frontend.controller;
 
 import achievers.ieps.frontend.dto.request.CreateVendorRequestDTO;
 import achievers.ieps.frontend.dto.request.LoginJwtRequestDTO;
-import achievers.ieps.frontend.dto.response.VendorResponseDTO;
+import achievers.ieps.frontend.dto.request.PasswordRequestDTO;
+import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
+import achievers.ieps.frontend.dto.response.UserModelResponseDTO;
+import achievers.ieps.frontend.restservice.BerkasRestService;
 import achievers.ieps.frontend.restservice.UserRestService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -19,15 +22,15 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 public class UserController {
     @Autowired
     UserRestService userRestService;
+
+    @Autowired
+    BerkasRestService berkasRestService;
 
     @GetMapping("/")
     public String home(){
@@ -42,9 +45,16 @@ public class UserController {
     }
 
     @GetMapping("/validasi-vendor")
-    public String validasiVendorPage(Model model) throws IOException, InterruptedException {
+    public String validasiVendorPage(HttpServletRequest httprequest, Model model) throws IOException, InterruptedException {
         var listVendor = userRestService.getAllVendor();
         model.addAttribute("listVendor", listVendor);
+
+        var token = httprequest.getSession().getAttribute("token").toString();
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var session = userRestService.viewProfile(tokenObj);
+        model.addAttribute("user", session);
+        
         return "validasi-vendor.html";
     }
 
@@ -53,7 +63,16 @@ public class UserController {
         var token = httprequest.getSession().getAttribute("token").toString();
         var vendor = userRestService.getProfilVendor(token, id);
         model.addAttribute("vendor", vendor);
-        return "profil-vendor.html";
+
+        var listBerkas = berkasRestService.retrieveAllBerkasById(token, id.toString());
+        model.addAttribute("listBerkas", listBerkas);
+
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var session = userRestService.viewProfile(tokenObj);
+        model.addAttribute("user", session);
+
+        return "validasi-profil-vendor.html";
     }
 
     @GetMapping("/vendor/{id}/validasi/{status}")
@@ -61,7 +80,13 @@ public class UserController {
         var token = httprequest.getSession().getAttribute("token").toString();
         var vendor = userRestService.updateProfilVendor(status, token, id);
         model.addAttribute("vendor", vendor);
-        return "profil-vendor.html";
+
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var session = userRestService.viewProfile(tokenObj);
+        model.addAttribute("user", session);
+        
+        return "validasi-profil-vendor.html";
     }
 
     @GetMapping("/login-form")
@@ -84,15 +109,15 @@ public class UserController {
         if (authentication != null && authentication.isAuthenticated()){
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
             if (authorities.contains(new SimpleGrantedAuthority("VENDOR_NOT_VALID"))){
-                //TODO connect to page accordingly
+                return "redirect:/profile/view";
             } else if (authorities.contains(new SimpleGrantedAuthority("VENDOR"))) {
-                //TODO connect to page accordingly
+                return "redirect:/profile/view";
             } else if (authorities.contains(new SimpleGrantedAuthority("PROCSTAFF"))) {
-                //TODO connect to page accordingly
+                return "redirect:/profile/view";
             } else if (authorities.contains(new SimpleGrantedAuthority("PROCMANAGER"))) {
-                //TODO connect to page accordingly
+                return "redirect:/profile/view";
             } else if (authorities.contains(new SimpleGrantedAuthority("ADMIN"))){
-                //TODO connect to page accordingly
+                return "redirect:/admin/view-user";
             }
         }
         return "test.html";
@@ -128,6 +153,134 @@ public class UserController {
         } else {
             userRestService.getToken(httprequest, vendorDTO.getEmail(), vendorDTO.getPassword());
             return "success";
+        }
+    }
+
+    @GetMapping("/profile/view")
+    public String viewProfile(HttpServletRequest httprequest, Model model) throws IOException, InterruptedException, JSONException{
+        var token = httprequest.getSession().getAttribute("token").toString();
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var session = userRestService.viewProfile(tokenObj);
+        if (session.getRole().equals("Vendor")) {
+            model.addAttribute("vendor", session);
+            model.addAttribute("passwordDTO", new PasswordRequestDTO());
+            return "view-profil-vendor.html";
+        } else {
+            model.addAttribute("user", session);
+            model.addAttribute("passwordDTO", new PasswordRequestDTO());
+            return "view-profil-user.html";
+        }
+    }
+
+    @GetMapping("/profile/edit")
+    public String editProfile(HttpServletRequest httprequest, Model model) throws IOException, InterruptedException, JSONException{
+        var token = httprequest.getSession().getAttribute("token").toString();
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var session = userRestService.viewProfile(tokenObj);
+        if (session.getRole().equals("Vendor")) {
+            model.addAttribute("vendor", session);
+            return "update-profil-vendor.html";
+        } else {
+            model.addAttribute("user", session);
+            return "update-profil-user.html";
+        }
+    }
+
+    @PostMapping("/profile/edit")
+    public String saveEditProfile(HttpServletRequest httprequest, @Valid @ModelAttribute UserModelResponseDTO userModelResponseDTO, BindingResult bindingResult, Model model) throws IOException, InterruptedException, JSONException {
+        var token = httprequest.getSession().getAttribute("token").toString();
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var user = userRestService.viewProfile(tokenObj);
+        userModelResponseDTO.setEmailToken(user.getEmail());
+
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = new ArrayList<>();
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errorMessages.add(error.getDefaultMessage());
+            }
+            model.addAttribute("error", errorMessages);
+            if (user.getRole().equals("Vendor")) {
+                model.addAttribute("vendor", user);
+                return "update-profil-vendor.html";
+            } else {
+                model.addAttribute("user", user);
+                return "update-profil-user.html";
+            }
+        } else {
+            UserModelResponseDTO dto = userRestService.updateProfile(httprequest, userModelResponseDTO, token);
+            if (dto != null) {
+                model.addAttribute("success", "Data perubahan berhasil disimpan");
+                if (dto.getRole().equals("Vendor")) {
+                    model.addAttribute("vendor", dto);
+                    model.addAttribute("passwordDTO", new PasswordRequestDTO());
+                    return "view-profil-vendor.html";
+                } else {
+                    model.addAttribute("user", dto);
+                    model.addAttribute("passwordDTO", new PasswordRequestDTO());
+                    return "view-profil-user.html";
+                }
+            } else {
+                // Handle update failure
+                model.addAttribute("error", "Email digunakan oleh user lain");
+                if (user.getRole().equals("Vendor")) {
+                    model.addAttribute("vendor", user);
+                    return "update-profil-vendor.html";
+                } else {
+                    model.addAttribute("user", user);
+                    return "update-profil-user.html";
+                }
+            }
+        }
+    }
+
+    @PostMapping("/profile/edit/password")
+    public String saveEditProfilePassword(HttpServletRequest httprequest, @Valid @ModelAttribute PasswordRequestDTO passwordDTO, BindingResult bindingResult, Model model) throws IOException, InterruptedException, JSONException{
+        var token = httprequest.getSession().getAttribute("token").toString();
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var user = userRestService.viewProfile(tokenObj);
+        if (bindingResult.hasErrors()){
+            List<String> errorMessages = new ArrayList<>();
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errorMessages.add(error.getDefaultMessage());
+            }
+            model.addAttribute("error", errorMessages);
+            if (user.getRole().equals("Vendor")) {
+                model.addAttribute("vendor", user);
+                model.addAttribute("passwordDTO", new PasswordRequestDTO());
+                return "view-profil-vendor.html";
+            } else {
+                model.addAttribute("user", user);
+                model.addAttribute("passwordDTO", new PasswordRequestDTO());
+                return "view-profil-user.html";
+            }
+        } else {
+            UserModelResponseDTO dto = userRestService.updateProfilePassword(passwordDTO, token);
+            if (dto == null){
+                model.addAttribute("error", "Mohon ulangi, Password tidak sesuai dengan yang dikonfirmasi atau Password Baru sama dengan Password lama");
+                if (user.getRole().equals("Vendor")) {
+                    model.addAttribute("vendor", user);
+                    model.addAttribute("passwordDTO", new PasswordRequestDTO());
+                    return "view-profil-vendor.html";
+                } else {
+                    model.addAttribute("user", user);
+                    model.addAttribute("passwordDTO", new PasswordRequestDTO());
+                    return "view-profil-user.html";
+                }
+            }
+            model.addAttribute("success", "Password berhasil diubah");
+            if (dto.getRole().equals("Vendor")){
+                model.addAttribute("vendor", dto);
+                model.addAttribute("passwordDTO", new PasswordRequestDTO());
+                return "view-profil-vendor.html";
+            } else {
+                model.addAttribute("user", dto);
+                model.addAttribute("passwordDTO", new PasswordRequestDTO());
+                return "view-profil-user.html";
+            }
         }
     }
 }

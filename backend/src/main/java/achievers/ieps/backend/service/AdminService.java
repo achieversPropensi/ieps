@@ -6,7 +6,6 @@ import achievers.ieps.backend.dto.request.UpdateVendorRequestDTO;
 import achievers.ieps.backend.dto.response.UserModelResponseDTO;
 import achievers.ieps.backend.dto.response.VendorResponseDTOFauzan;
 import achievers.ieps.backend.model.UserModel;
-import achievers.ieps.backend.model.Vendor;
 
 import java.util.UUID;
 

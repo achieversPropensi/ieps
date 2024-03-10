@@ -2,6 +2,7 @@ package achievers.ieps.backend.service;
 
 import achievers.ieps.backend.dto.request.CreateUserRequestDTO;
 import achievers.ieps.backend.dto.request.LoginJwtRequestDTO;
+import achievers.ieps.backend.dto.response.UserModelResponseDTO;
 import achievers.ieps.backend.model.UserModel;
 import achievers.ieps.backend.model.Vendor;
 import jakarta.validation.Valid;
@@ -28,4 +29,9 @@ public interface UserService {
     boolean isEmailExist(String email, UUID id);
     boolean isPasswordExist(String password);
     boolean isPasswordExist(String password, UUID id);
+    UserModel updateUser(UserModelResponseDTO userModelResponseDTO); //PBI-6 (U)
+    UserModelResponseDTO getUserByEmail(String email); // PBI-6 (R)
+    UserModelResponseDTO updatePasswordUser(String email, String password, String confirmPassword);
+    boolean checkPassword(String rawPassword, String encodedPassword);
+    
 }

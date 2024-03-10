@@ -5,12 +5,12 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <object th:include="~{fragments/commonfauzan :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/commonfauzan :: css}" th:remove="tag"></object>
 
     <title>List Validasi Vendor</title>
 
     <style>
-        .wider {
+        .wider{
             min-width: 150px;
         }
     </style>
@@ -20,6 +20,9 @@
 <body>
 
     <main id="main" class="main">
+        <nav th:if="${user.role == 'Admin'}" th:replace="~{fragments/navbar-admin :: navbar(activeTab)}"></nav>
+        <nav th:if="${user.role == 'Procurement Manager'}" th:replace="~{fragments/navbar-procm :: navbar(activeTab)}"></nav>
+        <nav th:if="${user.role == 'Procurement Staff'}" th:replace="~{fragments/navbar-procs :: navbar(activeTab)}"></nav>
         
         <div class="pagetitle d-flex justify-content-between align-items-center">
             <h1>Validasi Vendor</h1>

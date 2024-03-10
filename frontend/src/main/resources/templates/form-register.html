@@ -95,6 +95,7 @@
             <br>
             <div class="form-group">
               <label><b>Telepon</b><span style="color: red;">*</span></label>
+              <p>Masukkan nomor dengan format awalan '+62' atau '08', tanpa garis pemisah, contoh: +62856555271 atau 0856555271.</p>
               <input type="text" class="form-control" placeholder="Masukkan nomor telepon Anda"
                      th:field="*{nomorTelefon}" required />
             </div>
@@ -113,6 +114,7 @@
             <br>
             <div class="form-group">
               <label><b>Password</b><span style="color: red;">*</span></label>
+              <p>*Password harus minimal 8 karakter, dengan minimal 1 huruf kapital dan 1 angka.</p>
               <input type="password" class="form-control" placeholder="Masukkan password Anda" th:field="*{password}"
                      required />
             </div>

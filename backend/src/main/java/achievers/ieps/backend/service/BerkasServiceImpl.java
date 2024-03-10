@@ -10,12 +10,8 @@ import achievers.ieps.backend.security.jwt.JwtUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -30,19 +26,15 @@ public class BerkasServiceImpl implements BerkasService {
 
     @Override
     public Berkas store(CreateBerkasRequestDTO createBerkasRequestDTO) throws IOException {
-        var nama = createBerkasRequestDTO.getNama();
-        var judul = createBerkasRequestDTO.getJudul();
-        var type = createBerkasRequestDTO.getType();
-        var data = createBerkasRequestDTO.getData();
         var email = jwtUtils.getEmailFromJwtToken(createBerkasRequestDTO.getToken());
-
         Vendor vendor = (Vendor) userDb.findByEmail(email);
 
         Berkas berkas = new Berkas();
-        berkas.setNama(nama);
-        berkas.setJudul(judul);
-        berkas.setType(type);
-        berkas.setData(data);
+        berkas.setNama(createBerkasRequestDTO.getNama());
+        berkas.setDeskripsi(createBerkasRequestDTO.getDeskripsi());
+        berkas.setJudul(createBerkasRequestDTO.getJudul());
+        berkas.setType(createBerkasRequestDTO.getType());
+        berkas.setData(createBerkasRequestDTO.getData());
         berkas.setVendor(vendor);
 
         return berkasDb.save(berkas);
@@ -74,20 +66,15 @@ public class BerkasServiceImpl implements BerkasService {
     public Berkas edit(UpdateBerkasRequestDTO updateBerkasRequestDTO) {
         var email = jwtUtils.getEmailFromJwtToken(updateBerkasRequestDTO.getToken());
         Vendor vendor = (Vendor) userDb.findByEmail(email);
-        System.out.println(vendor.getId()); System.out.println(updateBerkasRequestDTO.getId());
+
         var berkasExisting = berkasDb.findByVendorIdAndId(
                 vendor.getId(), updateBerkasRequestDTO.getId());
 
-        var judul = updateBerkasRequestDTO.getJudul();
-        var type = updateBerkasRequestDTO.getType();
-        var data = updateBerkasRequestDTO.getData();
-
-        berkasExisting.setJudul(judul);
-        berkasExisting.setType(type);
-        berkasExisting.setData(data);
+        berkasExisting.setJudul(updateBerkasRequestDTO.getJudul());
+        berkasExisting.setType(updateBerkasRequestDTO.getType());
+        berkasExisting.setData(updateBerkasRequestDTO.getData());
 
         return berkasDb.save(berkasExisting);
-
     }
 
 }
