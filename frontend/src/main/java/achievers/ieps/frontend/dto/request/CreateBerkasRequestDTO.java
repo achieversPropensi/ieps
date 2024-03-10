@@ -13,5 +13,6 @@ public class CreateBerkasRequestDTO {
     private String judul;
     private String type;
     private byte[] data;
+    private Long size;
     private String token;
 }
