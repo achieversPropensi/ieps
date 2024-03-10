@@ -1,21 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+    <object th:insert="~{fragments/commonfauzan :: css}" th:remove="tag"></object>
+    <object th:insert="~{fragments/commonfauzan :: js}" th:remove="tag"></object>
+  
     <title>Navbar Procurement Manager</title>
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../../static/css/style-navbar.css" />
-    <script src="../../static/js/script-navbar.js"></script>
+  
   </head>
   <body>
-    <nav class="sidebar">
+    <nav th:fragment="navbar(activeTab)" class="sidebar">
       <div class="menu_content">
         <ul class="menu_items">
 
           <!-- Logo PT Truba Jaga Cita -->
           <li class="item">
-            <img src="../../static/images/logo-ieps.png"/>
+            <img src="https://github.com/fauzanrrizky/Achievers-IEPS/blob/main/images/logo-ieps.png?raw=true"
+             alt="Logo PT Truba">
           </li>
 
           <br>
@@ -30,7 +35,7 @@
           <br>
           <!-- Manager : Vendor Assessment -->
           <li class="item">
-            <a href="#" class="nav_link">
+            <a href="/konfigurasi-berkas" class="nav_link">
               <span class="navlink_icon">
                 <i class="bx bx-edit-alt"></i>
               </span>
@@ -40,7 +45,7 @@
 
           <!-- Manager : Validasi Vendor  -->
           <li class="item">
-            <a href="#" class="nav_link">
+            <a href="/validasi-vendor" class="nav_link">
               <span class="navlink_icon">
                 <i class="bx bx-buildings"></i>
               </span>
@@ -80,7 +85,7 @@
 
           <!-- Manager : Logout -->
           <li class="item">
-            <a href="#" class="nav_link">
+            <a href="/logout" class="nav_link">
               <span class="navlink_icon">
                 <i class="bx bx-log-out"></i>
               </span>
@@ -91,10 +96,14 @@
           <!-- Profil -->
           <div class="bottom_content">
             <div class="bottom collapse_sidebar">
-              <img src="../../static/images/ava-manager.png" id="admin-avatar">
-              <div id="profil-content">
-                <span id="name">Qisty</span>
+              <img src="https://github.com/fauzanrrizky/Achievers-IEPS/blob/main/images/ava-admin.png?raw=true"
+               alt="Admin Avatar"
+               id="admin-avatar">
+               <div id="profil-content">
+              <a href="/profile/view">
+                <span id="name" th:text="${user.nama}"></span>
                 <span id="role">Procurement Manager</span>
+              </a>
               </div>
             </div>
           </div>

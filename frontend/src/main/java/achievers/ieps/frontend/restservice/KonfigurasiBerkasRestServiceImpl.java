@@ -4,7 +4,6 @@ import org.apache.http.HttpHeaders;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,14 +12,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import achievers.ieps.frontend.dto.request.CreateKonfigurasiBerkasRequestDTO;
 import achievers.ieps.frontend.dto.response.KonfigurasiBerkasResponseDTO;
 import jakarta.transaction.Transactional;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.Arrays;
-import java.util.HashMap;
 
 @Service
 @Transactional

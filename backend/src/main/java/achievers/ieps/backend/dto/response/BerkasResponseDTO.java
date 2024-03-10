@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class BerkasResponseDTO {
     private Long id;
     private String nama;
+    private String deskripsi;
     private String judul;
     private String url;
     private String type;

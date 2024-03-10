@@ -17,10 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
@@ -35,6 +32,7 @@ public class KonfigurasiBerkas {
         var token = httprequest.getSession().getAttribute("token").toString();
         List<KonfigurasiBerkasResponseDTO> lst = konfigurasiBerkasRestService.getAllKonfigurasiBerkas(token);
         model.addAttribute("lst", lst);
+        
         return "konfigurasi-berkas";
     }
 

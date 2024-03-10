@@ -1,6 +1,5 @@
 package achievers.ieps.frontend.restservice;
 
-import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
 import achievers.ieps.frontend.dto.response.VendorInfoResponseDTO;
 
 import java.util.Map;

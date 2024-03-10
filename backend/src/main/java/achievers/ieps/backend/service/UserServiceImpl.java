@@ -1,12 +1,19 @@
 package achievers.ieps.backend.service;
 
-
 import achievers.ieps.backend.dto.request.CreateUserRequestDTO;
 import achievers.ieps.backend.dto.request.LoginJwtRequestDTO;
-import achievers.ieps.backend.model.Role;
+import achievers.ieps.backend.dto.response.UserModelResponseDTO;
+import achievers.ieps.backend.model.Admin;
+import achievers.ieps.backend.model.ProcManager;
+import achievers.ieps.backend.model.ProcStaff;
 import achievers.ieps.backend.model.UserModel;
 import achievers.ieps.backend.model.Vendor;
+import achievers.ieps.backend.repository.AdminDb;
+import achievers.ieps.backend.repository.ProcManagerDb;
+import achievers.ieps.backend.repository.ProcStaffDb;
 import achievers.ieps.backend.repository.UserDb;
+import achievers.ieps.backend.repository.UserModelDb;
+import achievers.ieps.backend.repository.VendorDb;
 import achievers.ieps.backend.security.jwt.JwtUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -32,6 +40,21 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private AdminDb adminDb;
+
+    @Autowired
+    private ProcManagerDb procManagerDb;
+
+    @Autowired
+    private ProcStaffDb procStaffDb;
+
+    @Autowired
+    private VendorDb vendorDb;
+
+    @Autowired
+    private UserModelDb userModelDb;
 
     @Override
     public UserModel addUser(UserModel user, CreateUserRequestDTO createUserRequestDTO){
@@ -105,6 +128,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean checkPassword(String rawPassword, String encodedPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+
+    @Override
     public ResponseEntity<String> loginJwt(LoginJwtRequestDTO loginJwtRequestDTO){
         String email = loginJwtRequestDTO.getEmail();
         UserModel userModel = userDb.findByEmail(email);
@@ -172,7 +201,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isEmailExist(String email, UUID id){
-        return getAllUser().stream().anyMatch(b -> b.getEmail().equals(email) && !b.getId().equals(id));
+        return getAllUser().stream().anyMatch(b -> b.getEmail().equals(email) && b.getId().equals(id));
     }
 
     @Override
@@ -183,5 +212,156 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isPasswordExist(String password, UUID id){
         return getAllUser().stream().anyMatch(b -> b.getPassword().equals(password) && !b.getId().equals(id));
+    }
+
+    // PBI-6 Mengelola Profil (U)
+    @Override
+    public UserModel updateUser(UserModelResponseDTO userModelResponseDTO){
+        String role = userModelResponseDTO.getRole();
+        UUID id = UUID.fromString(userModelResponseDTO.getId());
+        String newEmail = userModelResponseDTO.getEmail();
+        String emailToken = userModelResponseDTO.getEmailToken();
+
+        if (newEmail.equals(emailToken)) {
+            if (role.equals("Admin")) {
+                Admin existingUser = adminDb.findById(id)
+                        .orElseThrow(() -> new NoSuchElementException("User not found"));
+                existingUser.setNama(userModelResponseDTO.getNama());
+                existingUser.setEmail(userModelResponseDTO.getEmail());
+                existingUser.setNomorTelefon(userModelResponseDTO.getNomorTelefon());
+                existingUser.setUpdatedAt(LocalDateTime.now());
+
+                return adminDb.save(existingUser);
+
+            }else if (role.equals("Procurement Manager")){
+                ProcManager existingProcManager = procManagerDb.findById(id)
+                        .orElseThrow(() -> new NoSuchElementException("User not found"));
+
+                existingProcManager.setNama(userModelResponseDTO.getNama());
+                existingProcManager.setEmail(userModelResponseDTO.getEmail());
+                existingProcManager.setNomorTelefon(userModelResponseDTO.getNomorTelefon());
+                existingProcManager.setUpdatedAt(LocalDateTime.now());
+
+
+                return procManagerDb.save(existingProcManager);
+
+            }else if (role.equals("Procurement Staff")){
+                ProcStaff existingProcStaff = procStaffDb.findById(id)
+                        .orElseThrow(() -> new NoSuchElementException("User not found"));
+
+                existingProcStaff.setNama(userModelResponseDTO.getNama());
+                existingProcStaff.setEmail(userModelResponseDTO.getEmail());
+                existingProcStaff.setNomorTelefon(userModelResponseDTO.getNomorTelefon());
+                existingProcStaff.setUpdatedAt(LocalDateTime.now());
+
+                return procStaffDb.save(existingProcStaff);
+            } else if (role.equals("Vendor")){
+                Vendor existingVendor = vendorDb.findById(id)
+                        .orElseThrow(() -> new NoSuchElementException("User not found"));
+                existingVendor.setNama(userModelResponseDTO.getNama());
+                existingVendor.setEmail(userModelResponseDTO.getEmail());
+                existingVendor.setNomorTelefon(userModelResponseDTO.getNomorTelefon());
+                existingVendor.setAlamat(userModelResponseDTO.getAlamat());
+                existingVendor.setNamaPerusahaan(userModelResponseDTO.getNamaPerusahaan());
+                existingVendor.setUpdatedAt(LocalDateTime.now());
+
+                return vendorDb.save(existingVendor);
+            }
+            else {
+                throw new NoSuchElementException("Role not found");
+            }
+        } else {
+            if (!isEmailExist(newEmail)){
+                if (role.equals("Admin")) {
+                    Admin existingUser = adminDb.findById(id)
+                            .orElseThrow(() -> new NoSuchElementException("User not found"));
+                    existingUser.setNama(userModelResponseDTO.getNama());
+                    existingUser.setEmail(userModelResponseDTO.getEmail());
+                    existingUser.setNomorTelefon(userModelResponseDTO.getNomorTelefon());
+                    existingUser.setUpdatedAt(LocalDateTime.now());
+
+                    return adminDb.save(existingUser);
+
+                }else if (role.equals("Procurement Manager")){
+                    ProcManager existingProcManager = procManagerDb.findById(id)
+                            .orElseThrow(() -> new NoSuchElementException("User not found"));
+
+                    existingProcManager.setNama(userModelResponseDTO.getNama());
+                    existingProcManager.setEmail(userModelResponseDTO.getEmail());
+                    existingProcManager.setNomorTelefon(userModelResponseDTO.getNomorTelefon());
+                    existingProcManager.setUpdatedAt(LocalDateTime.now());
+
+
+                    return procManagerDb.save(existingProcManager);
+
+                }else if (role.equals("Procurement Staff")){
+                    ProcStaff existingProcStaff = procStaffDb.findById(id)
+                            .orElseThrow(() -> new NoSuchElementException("User not found"));
+
+                    existingProcStaff.setNama(userModelResponseDTO.getNama());
+                    existingProcStaff.setEmail(userModelResponseDTO.getEmail());
+                    existingProcStaff.setNomorTelefon(userModelResponseDTO.getNomorTelefon());
+                    existingProcStaff.setUpdatedAt(LocalDateTime.now());
+
+                    return procStaffDb.save(existingProcStaff);
+                } else if (role.equals("Vendor")){
+                    Vendor existingVendor = vendorDb.findById(id)
+                            .orElseThrow(() -> new NoSuchElementException("User not found"));
+                    existingVendor.setNama(userModelResponseDTO.getNama());
+                    existingVendor.setEmail(userModelResponseDTO.getEmail());
+                    existingVendor.setNomorTelefon(userModelResponseDTO.getNomorTelefon());
+                    existingVendor.setAlamat(userModelResponseDTO.getAlamat());
+                    existingVendor.setNamaPerusahaan(userModelResponseDTO.getNamaPerusahaan());
+                    existingVendor.setUpdatedAt(LocalDateTime.now());
+
+                    return vendorDb.save(existingVendor);
+                }
+                else {
+                    throw new NoSuchElementException("Role not found");
+                }
+            }
+        }
+        return null;
+    }
+
+    // PBI-6 (R)
+    @Override
+    public UserModelResponseDTO getUserByEmail(String email){
+        var user = userModelDb.findByEmail(email);
+        UserModelResponseDTO userModelDTO = new UserModelResponseDTO();
+
+        if (user.isPresent() && !user.get().isDeleted()) {
+            userModelDTO.setId(user.get().getId().toString());
+            userModelDTO.setNama(user.get().getNama());
+            userModelDTO.setEmail(user.get().getEmail());
+            userModelDTO.setRole(user.get().getRole().getRole());
+            userModelDTO.setNomorTelefon(user.get().getNomorTelefon());
+            userModelDTO.setPassword(user.get().getPassword());
+            if (user.get() instanceof Vendor){
+                userModelDTO.setAlamat(((Vendor) user.get()).getAlamat());
+                userModelDTO.setNamaPerusahaan(((Vendor) user.get()).getNamaPerusahaan());
+                userModelDTO.setStatus(((Vendor) user.get()).getStatus());
+            }
+            return userModelDTO;
+        }
+        else{
+            throw new NoSuchElementException("User Not Found");
+        }
+    }
+
+    // PBI-6 (U Password)
+    @Override
+    public UserModelResponseDTO updatePasswordUser(String email, String password, String confirmPassword) {
+        UserModel userModel = userDb.findByEmail(email);
+        if (userModel != null && password.equals(confirmPassword)) {
+            var oldPassword = userModel.getPassword();
+            boolean isSamePassword = checkPassword(password, oldPassword);
+            if (!isSamePassword){
+                userModel.setPassword(encrypt(password));
+                userModelDb.save(userModel);
+                return getUserByEmail(email);
+            }
+        }
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package achievers.ieps.frontend.controller;
 import achievers.ieps.frontend.dto.request.*;
 import achievers.ieps.frontend.dto.response.BerkasInfoResponseDTO;
 import achievers.ieps.frontend.dto.response.KonfigurasiBerkasResponseDTO;
+import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
 import achievers.ieps.frontend.restservice.BerkasRestService;
 import achievers.ieps.frontend.restservice.UserRestService;
 import achievers.ieps.frontend.restservice.VendorRestService;
@@ -14,10 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,34 +34,37 @@ public class BerkasController {
     UserRestService userRestService;
 
     @GetMapping("/vendor-assessment")
-    public String vendorAssessment(HttpServletRequest request, Model model){
+    public String vendorAssessment(HttpServletRequest request, Model model) throws IOException, InterruptedException {
         var token = request.getSession().getAttribute("token").toString();
-        System.out.println(token);
+
         var check = vendorRestService.checkInfo(token);
         model.addAttribute("vendorInfo", check);
 
-        System.out.println(check.toString());
+        var user = userRestService.viewProfile(new LoginJwtResponseDTO(token));
+        model.addAttribute("vendor", user);
+
         if (!check.isHasSubmitted()) {
             return "redirect:/vendor-assessment/form";
         }
 
         var listBerkas = berkasRestService.retrieveAllBerkas(token);
-        System.out.println(listBerkas.toString());
         model.addAttribute("listBerkas", listBerkas);
 
         return "view-va.html";
     }
 
     @GetMapping("/vendor-assessment/form")
-    public String vaForm(HttpServletRequest request, Model model){
+    public String vaForm(HttpServletRequest request, Model model) throws IOException, InterruptedException {
         var token = request.getSession().getAttribute("token").toString();
-        System.out.println(token);
         var check = vendorRestService.checkInfo(token);
         model.addAttribute("vendorInfo", check);
 
         if (check.isHasSubmitted()) {
             return "redirect:/vendor-assessment";
         }
+
+        var user = userRestService.viewProfile(new LoginJwtResponseDTO(token));
+        model.addAttribute("vendor", user);
 
         var listKonfigurasi = berkasRestService.retrieveKonfigurasi(token);
         model.addAttribute("listKonfigurasi", listKonfigurasi);
@@ -71,6 +75,7 @@ public class BerkasController {
         for (KonfigurasiBerkasResponseDTO konfigurasi : listKonfigurasi) {
             UploadBerkasDTO berkas = new UploadBerkasDTO();
             berkas.setNama(konfigurasi.getNamaBerkas());
+            berkas.setDeskripsi(konfigurasi.getDeskripsi());
             listBerkas.add(berkas);
         }
 
@@ -91,13 +96,13 @@ public class BerkasController {
 
         var check = vendorRestService.checkInfo(token);
         model.addAttribute("vendorInfo", check);
-
+        System.out.println("Masuk sini ya...");
         if (bindingResult.hasErrors()){
             for (FieldError error : bindingResult.getFieldErrors()) {
                 errorMessages.add(error.getDefaultMessage());
             }
             model.addAttribute("error", errorMessages);
-
+            System.out.println("Masuk BINDING RESULTS ERROR ya...");
             var listKonfigurasi = berkasRestService.retrieveKonfigurasi(token);
             model.addAttribute("listKonfigurasi", listKonfigurasi);
 
@@ -107,6 +112,7 @@ public class BerkasController {
             for (KonfigurasiBerkasResponseDTO konfigurasi : listKonfigurasi) {
                 UploadBerkasDTO berkas = new UploadBerkasDTO();
                 berkas.setNama(konfigurasi.getNamaBerkas());
+                berkas.setDeskripsi(konfigurasi.getDeskripsi());
                 listBerkas.add(berkas);
             }
 
@@ -115,31 +121,23 @@ public class BerkasController {
 
             return "form-va.html";
         }
+
         for (UploadBerkasDTO berkasDTO: uploadBerkasFormDTO.getListBerkas()) {
-            System.out.println(berkasDTO.toString());
             var createBerkasDTO = new CreateBerkasRequestDTO();
             createBerkasDTO.setNama(berkasDTO.getNama());
+            createBerkasDTO.setDeskripsi(berkasDTO.getDeskripsi());
             createBerkasDTO.setJudul(berkasDTO.getFile().getOriginalFilename());
             createBerkasDTO.setType(berkasDTO.getFile().getContentType());
             createBerkasDTO.setData(berkasDTO.getFile().getBytes());
             createBerkasDTO.setToken(token);
 
-            try {
-                var output = berkasRestService.uploadBerkas(token, createBerkasDTO);
 
-                if (output.containsKey("error")) {
-                    errorMessages.add(output.get("error"));
-                    model.addAttribute("error", errorMessages);
+            var output = berkasRestService.uploadBerkas(token, createBerkasDTO);
 
-                    var listKonfigurasi = berkasRestService.retrieveKonfigurasi(token);
-                    model.addAttribute("listKonfigurasi", listKonfigurasi);
+            if (output.containsKey("error")) {
+                errorMessages.add(output.get("error"));
+                model.addAttribute("error", errorMessages);
 
-                    UploadBerkasFormDTO berkasFormDTO = new UploadBerkasFormDTO(); // Replace with your actual BerkasFormDTO instantiation
-                    model.addAttribute("berkasFormDTO", berkasFormDTO);
-
-                    return "form-va.html";
-                }
-            } catch (Exception e) {
                 var listKonfigurasi = berkasRestService.retrieveKonfigurasi(token);
                 model.addAttribute("listKonfigurasi", listKonfigurasi);
 
@@ -149,6 +147,7 @@ public class BerkasController {
                 for (KonfigurasiBerkasResponseDTO konfigurasi : listKonfigurasi) {
                     UploadBerkasDTO berkas = new UploadBerkasDTO();
                     berkas.setNama(konfigurasi.getNamaBerkas());
+                    berkas.setDeskripsi(konfigurasi.getDeskripsi());
                     listBerkas.add(berkas);
                 }
 
@@ -159,14 +158,12 @@ public class BerkasController {
             }
         }
         var submissionChange = vendorRestService.toggleSubmission(token);
-        System.out.println(submissionChange);
         return "redirect:/vendor-assessment";
     }
 
     @GetMapping("/vendor-assessment/edit")
-    public String vaEditForm(HttpServletRequest request, Model model){
+    public String vaEditForm(HttpServletRequest request, Model model) throws IOException, InterruptedException {
         var token = request.getSession().getAttribute("token").toString();
-        System.out.println(token);
         var check = vendorRestService.checkInfo(token);
         model.addAttribute("vendorInfo", check);
 
@@ -178,6 +175,9 @@ public class BerkasController {
             return "redirect:/vendor-assessment";
         }
 
+        var user = userRestService.viewProfile(new LoginJwtResponseDTO(token));
+        model.addAttribute("vendor", user);
+
         var listBerkasExisting = berkasRestService.retrieveAllBerkas(token);
         model.addAttribute("listBerkasExisting", listBerkasExisting);
 
@@ -188,6 +188,7 @@ public class BerkasController {
             UpdateBerkasDTO berkas = new UpdateBerkasDTO();
             berkas.setId(berkasInfo.getId());
             berkas.setNama(berkasInfo.getNama());
+            berkas.setDeskripsi(berkasInfo.getDeskripsi());
             listBerkasInDTO.add(berkas);
         }
 
@@ -226,6 +227,7 @@ public class BerkasController {
                 UpdateBerkasDTO berkas = new UpdateBerkasDTO();
                 berkas.setId(berkasInfo.getId());
                 berkas.setNama(berkasInfo.getNama());
+                berkas.setDeskripsi(berkasInfo.getDeskripsi());
                 listBerkasInDTO.add(berkas);
             }
 
@@ -236,44 +238,20 @@ public class BerkasController {
         }
 
         for (UpdateBerkasDTO berkasDTO: updateBerkasFormDTO.getListBerkas()) {
-            System.out.println("DISINI yang dari DTO: " + berkasDTO.toString());
 
             var updateBerkasDTO = new UpdateBerkasRequestDTO();
-
             updateBerkasDTO.setId(berkasDTO.getId());
             updateBerkasDTO.setNama(berkasDTO.getNama());
+            updateBerkasDTO.setDeskripsi(berkasDTO.getDeskripsi());
             updateBerkasDTO.setJudul(berkasDTO.getFile().getOriginalFilename());
             updateBerkasDTO.setType(berkasDTO.getFile().getContentType());
             updateBerkasDTO.setData(berkasDTO.getFile().getBytes());
             updateBerkasDTO.setToken(token);
 
-            try {
-                var output = berkasRestService.updateBerkas(token, updateBerkasDTO);
+            var output = berkasRestService.updateBerkas(token, updateBerkasDTO);
 
-                if (output.containsKey("error")) {
-                    errorMessages.add(output.get("error"));
-                    model.addAttribute("error", errorMessages);
-
-                    var listBerkasExisting = berkasRestService.retrieveAllBerkas(token);
-                    model.addAttribute("listBerkasExisting", listBerkasExisting);
-
-                    UpdateBerkasFormDTO berkasFormDTO = new UpdateBerkasFormDTO();
-                    List<UpdateBerkasDTO> listBerkasInDTO = new ArrayList<>();
-
-                    for (BerkasInfoResponseDTO berkasInfo : listBerkasExisting) {
-                        UpdateBerkasDTO berkas = new UpdateBerkasDTO();
-                        berkas.setId(berkasInfo.getId());
-                        berkas.setNama(berkasInfo.getNama());
-                        listBerkasInDTO.add(berkas);
-                    }
-
-                    berkasFormDTO.setListBerkas(listBerkasInDTO);
-                    model.addAttribute("berkasFormDTO", berkasFormDTO);
-
-                    return "form-va-edit.html";
-                }
-            } catch (Exception e) {
-                errorMessages.add("Ukuran file melebihi 5MB!");
+            if (output.containsKey("error")) {
+                errorMessages.add(output.get("error"));
                 model.addAttribute("error", errorMessages);
 
                 var listBerkasExisting = berkasRestService.retrieveAllBerkas(token);
@@ -286,6 +264,7 @@ public class BerkasController {
                     UpdateBerkasDTO berkas = new UpdateBerkasDTO();
                     berkas.setId(berkasInfo.getId());
                     berkas.setNama(berkasInfo.getNama());
+                    berkas.setDeskripsi(berkasInfo.getDeskripsi());
                     listBerkasInDTO.add(berkas);
                 }
 
@@ -293,14 +272,10 @@ public class BerkasController {
                 model.addAttribute("berkasFormDTO", berkasFormDTO);
 
                 return "form-va-edit.html";
-
             }
-
         }
         var submissionChange = vendorRestService.toggleSubmission(token);
-        System.out.println(submissionChange);
         return "redirect:/vendor-assessment";
-
     }
 
 }

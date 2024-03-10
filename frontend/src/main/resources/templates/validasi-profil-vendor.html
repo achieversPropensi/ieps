@@ -25,10 +25,14 @@
 
 <body>
     <main id="main" class="main">
-
+        <nav th:if="${user.role == 'Admin'}" th:replace="~{fragments/navbar-admin :: navbar(activeTab)}"></nav>
+        <nav th:if="${user.role == 'Procurement Manager'}" th:replace="~{fragments/navbar-procm :: navbar(activeTab)}"></nav>
+        <nav th:if="${user.role == 'Procurement Staff'}" th:replace="~{fragments/navbar-procs :: navbar(activeTab)}"></nav>
+        
         <div class="pagetitle d-flex justify-content-between align-items-center">
             <div class="icon">
-                <a href="validasi-vendor.html" onclick="history.go(-1); return false;"><i class="bi bi-arrow-left"></i> Back</a>
+                <a href="validasi-vendor.html" onclick="history.go(-1); return false;"><i class="bi bi-arrow-left"></i>
+                    Back</a>
                 <h1>Validasi Vendor</h1>
             </div>
         </div><!-- End Page Title -->
@@ -72,13 +76,13 @@
                                 <div class="row">
                                     <div class="col-lg-4 col-md-4 label text-bold text-primary">ID</div>
                                     <div class="col-lg-4 col-md-4 label text-bold text-primary">Role</div>
-                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Password</div>
+                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Perusahaan</div>
                                 </div>
 
                                 <div class="row" style="margin-bottom: 20px;">
                                     <div class="col-lg-4 col-md-4" th:text="${vendor.id}"></div>
                                     <div class="col-lg-4 col-md-4" th:text="${vendor.role}"></div>
-                                    <div class="col-lg-4 col-md-4">******</div>
+                                    <div class="col-lg-4 col-md-4" th:text="${vendor.namaPerusahaan}"></div>
                                 </div>
 
                                 <div class="row">
@@ -94,23 +98,45 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-lg-4 col-md-4 label text-bold text-primary">Perusahaan</div>
                                     <div class="col-lg-4 col-md-4 label text-bold text-primary">Alamat</div>
                                 </div>
 
                                 <div class="row" style="margin-bottom: 20px;">
-                                    <div class="col-lg-4 col-md-4" th:text="${vendor.namaPerusahaan}"></div>
                                     <div class="col-lg-4 col-md-4" th:text="${vendor.alamat}"></div>
+                                </div>
+
+                                <div class="row" th:if="${vendor.hasSubmitted}">
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Nomor</th>
+                                            <th>Nama Berkas</th>
+                                            <th>Berkas</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <!-- Iterasi melalui daftar berkas -->
+                                        <tr th:each="berkas, iterationStatus : ${listBerkas}">
+                                            <td th:text="${iterationStatus.count}"></td>
+                                            <td th:text="${berkas.nama}"></td>
+                                            <td>
+                                                <a th:href="${berkas.url}" th:text="${berkas.judul}" target="_blank"></a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
 
                                 <div class="row mt-4 d-flex justify-content-center">
                                     <div class="col-lg-6 col-md-6 text-center">
-                                        <div
-                                            th:if="${vendor.status == 'Gagal Terverifikasi' || vendor.status == 'Belum Terverifikasi'}">
-                                            <button class="btn btn-light btn-outline-dark" id="cancelConfirmationBtn">
-                                                Dibatalkan
+                                        <br>
+                                        <div th:if="${vendor.status != 'Sudah Terverifikasi' and vendor.hasSubmitted}">
+                                            <div>Apakah Anda ingin memverifikasi Vendor?</div>
+                                            <br>
+                                            <button class="btn btn-danger" id="cancelConfirmationBtn">
+                                                Gagal Verifikasi
                                             </button>
-                                            <button class="btn btn-dark" id="verifyConfirmationBtn">
+                                            <button class="btn btn-primary" id="verifyConfirmationBtn">
                                                 Verifikasi
                                             </button>
                                         </div>

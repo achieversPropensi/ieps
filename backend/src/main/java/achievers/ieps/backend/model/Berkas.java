@@ -35,4 +35,8 @@ public class Berkas {
     @Column(name="data", nullable = false)
     @JsonIgnore
     private byte[] data;
+
+    @NotNull
+    @Column(name="deskripsi", nullable = false)
+    private String deskripsi;
 }

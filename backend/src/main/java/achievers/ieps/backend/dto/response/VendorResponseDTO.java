@@ -21,4 +21,5 @@ public class VendorResponseDTO extends CreateVendorRequestDTO {
     private String role;
     private boolean isDeleted;
     private String status;
+    private boolean hasSubmitted;
 }

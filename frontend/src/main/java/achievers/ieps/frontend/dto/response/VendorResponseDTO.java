@@ -20,4 +20,5 @@ public class VendorResponseDTO extends CreateVendorRequestDTO {
     private LocalDateTime updatedAt;
     private boolean isDeleted;
     private String status;
+    private boolean hasSubmitted;
 }
