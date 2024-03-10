@@ -152,7 +152,7 @@ public class UserController {
             return "form-register.html";
         } else {
             userRestService.getToken(httprequest, vendorDTO.getEmail(), vendorDTO.getPassword());
-            return "success";
+            return "redirect:/vendor-assessment";
         }
     }
 
