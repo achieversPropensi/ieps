@@ -9,6 +9,7 @@ import achievers.ieps.frontend.dto.response.admin.AdminReadUserResponseDTO;
 import achievers.ieps.frontend.dto.response.admin.AdminReadUserUpdateResponseDTO;
 import achievers.ieps.frontend.dto.response.admin.VendorReadUserResponseDTO;
 import achievers.ieps.frontend.restservice.UserRestService;
+import achievers.ieps.frontend.setting.Setting;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,11 +32,15 @@ public class AdminController {
     @Autowired
     UserRestService userRestService;
 
+    @Autowired
+    Setting setting;
+
 
     // View All User
     @GetMapping("admin/view-user")
     public String viewAllUser(Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
-        String getAllUserModelApiUrl = "http://localhost:8080/api/admin/view-all";
+//        String getAllUserModelApiUrl = "http://localhost:8080/api/admin/view-all";
+        String getAllUserModelApiUrl = setting.ADMIN_SERVER_URL + "/view-all";
 
         // Make HTTP request to get all user
         RestTemplate restTemplate = new RestTemplate();
@@ -68,7 +73,8 @@ public class AdminController {
     @GetMapping("admin/view-user-proc-admin/{id}")
     public String viewUserProcAdmin(@PathVariable("id") UUID id, Model model, RedirectAttributes redirectAttributes) {
 
-        String getUserModelApiUrl = "http://localhost:8080/api/admin/profile-proc-admin/" + id;
+//        String getUserModelApiUrl = "http://localhost:8080/api/admin/profile-proc-admin/" + id;
+        String getUserModelApiUrl = setting.ADMIN_SERVER_URL + "/profile-proc-admin/" + id;
 
         System.out.println("MASUK GETMAPPING");
 
@@ -104,7 +110,8 @@ public class AdminController {
 
     @GetMapping("admin/view-user-vendor/{id}")
     public String viewUserVendor(@PathVariable("id") UUID id, Model model, RedirectAttributes redirectAttributes) {
-        String getVendorApiUrl = "http://localhost:8080/api/admin/profile-vendor/" + id;
+//        String getVendorApiUrl = "http://localhost:8080/api/admin/profile-vendor/" + id;
+        String getVendorApiUrl = setting.ADMIN_SERVER_URL + "/profile-vendor/" + id;
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -143,7 +150,8 @@ public class AdminController {
                           HttpServletRequest request,
                           RedirectAttributes redirectAttributes,
                           Model model) throws IOException{
-        String postUserUrl = "http://localhost:8080/api/admin/add-user";
+//        String postUserUrl = "http://localhost:8080/api/admin/add-user";
+        String postUserUrl = setting.ADMIN_SERVER_URL + "/add-user";
 
         try{
             // Create a HttpHeaders object to set the content type
@@ -195,7 +203,8 @@ public class AdminController {
             headers.setContentType(MediaType.APPLICATION_JSON);
             RestTemplate restTemplate = new RestTemplate();
 
-            String deleteUserUrl = "http://localhost:8080/api/admin/delete-user/" + id;
+//            String deleteUserUrl = "http://localhost:8080/api/admin/delete-user/" + id;
+            String deleteUserUrl = setting.ADMIN_SERVER_URL + "/delete-user/" + id;
 
             // Menghapus User berdasarkan ID
             ResponseEntity<ResponseAPI<String>> response = restTemplate.exchange(
@@ -226,7 +235,8 @@ public class AdminController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        String getUserApiUrl = "http://localhost:8080/api/admin/profile-proc-admin/" + id;
+//        String getUserApiUrl = "http://localhost:8080/api/admin/profile-proc-admin/" + id;
+        String getUserApiUrl = setting.ADMIN_SERVER_URL + "/profile-proc-admin/" + id;
 
         // Mendapatkan informasi user untuk ditampilkan di form
         ResponseEntity<ResponseAPI<AdminUpdateUserRequestDTO>> userResponse = restTemplate.exchange(
@@ -266,7 +276,8 @@ public class AdminController {
         headers.set("Authorization", "Bearer " + token);
 
 
-        String updateUserUrl = "http://localhost:8080/api/admin/update-user-admin-proc";
+//        String updateUserUrl = "http://localhost:8080/api/admin/update-user-admin-proc";
+        String updateUserUrl = setting.ADMIN_SERVER_URL + "/update-user-admin-proc";
 
 
         ResponseEntity<ResponseAPI<AdminReadUserUpdateResponseDTO>> response = restTemplate.exchange(
@@ -298,7 +309,8 @@ public class AdminController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        String getUserApiUrl = "http://localhost:8080/api/admin/profile-vendor/" + id;
+//        String getUserApiUrl = "http://localhost:8080/api/admin/profile-vendor/" + id;
+        String getUserApiUrl = setting.ADMIN_SERVER_URL + "/profile-vendor/" + id;
 
         // Mendapatkan informasi user untuk ditampilkan di form
         ResponseEntity<ResponseAPI<VendorRequestDTO>> userResponse = restTemplate.exchange(
@@ -338,7 +350,8 @@ public class AdminController {
         var token = request.getSession().getAttribute("token").toString();
         headers.set("Authorization", "Bearer " + token);
 
-        String updateUserUrl = "http://localhost:8080/api/admin/update-user-vendor";
+//        String updateUserUrl = "http://localhost:8080/api/admin/update-user-vendor";
+        String updateUserUrl = setting.ADMIN_SERVER_URL + "/update-user-vendor";
 
         System.out.println("MASUK UPDATE POST");
         ResponseEntity<ResponseAPI<VendorReadUserResponseDTO>> response = restTemplate.exchange(
