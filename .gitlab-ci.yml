@@ -1,14 +1,26 @@
 stages:
   - deploy
 
-deploy-railway:
+deploy-backend:
   stage: deploy
   image: ubuntu
   only:
-    - pushes
-    - main
+  - pushes
+  - main
   script:
     - cd backend
     - apt-get update && apt-get install -y curl
     - curl -fsSL https://railway.app/install.sh | sh
-    - railway up --service=$RAILWAY_SERVICE_NAME -d
+    - railway up --service=$RAILWAY_BACKEND_SERVICE_NAME -d
+
+deploy-frontend:
+  stage: deploy
+  image: ubuntu
+  only:
+  - pushes
+  - main
+  script:
+    - cd frontend
+    - apt-get update && apt-get install -y curl
+    - curl -fsSL https://railway.app/install.sh | sh
+    - railway up --service=$RAILWAY_FRONTEND_SERVICE_NAME -d
