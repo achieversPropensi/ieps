@@ -2,8 +2,10 @@ package achievers.ieps.frontend.restservice;
 
 import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
 import achievers.ieps.frontend.dto.response.VendorInfoResponseDTO;
+import achievers.ieps.frontend.setting.Setting;
 import jakarta.transaction.Transactional;
 import org.apache.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,8 +15,12 @@ import java.util.Map;
 @Service
 @Transactional
 public class VendorRestServiceImpl implements VendorRestService {
+    @Autowired
+    Setting setting;
+
     private final WebClient webClient;
-    private final String backendUrl = "http://localhost:8080/api";
+//    private final String backendUrl = "http://localhost:8080/api";
+    private final String backendUrl = setting.USER_SERVER_URL;
 
     public VendorRestServiceImpl(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder

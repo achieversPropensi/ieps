@@ -11,15 +11,21 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import achievers.ieps.frontend.setting.Setting;
+
 import java.util.List;
 import java.util.Map;
 
 @Service
 @Transactional
 public class BerkasRestServiceImpl implements BerkasRestService {
+    @Autowired
+    Setting setting;
+
     private final WebClient mockWebClient;
     private final WebClient webClient;
-    private final String backendUrl = "http://localhost:8080/api";
+//    private final String backendUrl = "http://localhost:8080/api";
+    private final String backendUrl = setting.USER_SERVER_URL;
     private final String mockUrl = "https://78cf56a3-7e45-4d24-a1f6-ee86bbb016a4.mock.pstmn.io/api";
 
     @Autowired

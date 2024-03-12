@@ -6,6 +6,7 @@ import achievers.ieps.frontend.dto.request.PasswordRequestDTO;
 import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
 import achievers.ieps.frontend.dto.response.UserModelResponseDTO;
 import achievers.ieps.frontend.dto.response.VendorResponseDTO;
+import achievers.ieps.frontend.setting.Setting;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.apache.http.HttpHeaders;
 import org.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,8 +40,11 @@ import java.util.UUID;
 @Service
 @Transactional
 public class UserRestServiceImpl implements UserRestService {
+    @Autowired
+    Setting setting;
     private final WebClient webClient;
-    private final String backendUrl = "http://localhost:8080/api/";
+//    private final String backendUrl = "http://localhost:8080/api/";
+    private final String backendUrl = setting.USER_SERVER_URL;
     public UserRestServiceImpl(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder
                 .baseUrl(backendUrl)
@@ -254,7 +259,7 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public void updateSession(String status, String role, String email, String password, String tokenDTO, HttpServletRequest httprequest) throws IOException, InterruptedException {
-        WebClient client = WebClient.create("http://localhost:8080");
+        WebClient client = WebClient.create("https://achievers-frontend.up.railway.app");
         LoginJwtRequestDTO loginDTO = new LoginJwtRequestDTO(email, password);
         LoginJwtResponseDTO token = client.post()
                 .uri("/api/auth/token")

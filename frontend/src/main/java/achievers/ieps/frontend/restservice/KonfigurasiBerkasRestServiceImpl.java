@@ -1,9 +1,11 @@
 package achievers.ieps.frontend.restservice;
 
+import achievers.ieps.frontend.setting.Setting;
 import org.apache.http.HttpHeaders;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,13 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class KonfigurasiBerkasRestServiceImpl implements KonfigurasiBerkasRestService{
+
+    @Autowired
+    Setting setting;
+
     private final List lst = new ArrayList<>();
     private final WebClient webClient;
-    private final String backendUrl = "http://localhost:8080/api/konfigurasi-berkas";
+    private final String backendUrl = setting.USER_SERVER_URL + "/konfigurasi-berkas";
 
     public KonfigurasiBerkasRestServiceImpl(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder
