@@ -10,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -23,7 +20,6 @@ import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
 import achievers.ieps.frontend.restservice.KonfigurasiBerkasRestService;
 import achievers.ieps.frontend.restservice.UserRestService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 
 import org.json.JSONException;
 import org.springframework.web.bind.annotation.RequestParam;
