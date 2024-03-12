@@ -4,7 +4,6 @@ import achievers.ieps.frontend.dto.request.*;
 import achievers.ieps.frontend.dto.response.BerkasInfoResponseDTO;
 import achievers.ieps.frontend.dto.response.KonfigurasiBerkasResponseDTO;
 import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
-import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
 import achievers.ieps.frontend.restservice.BerkasRestService;
 import achievers.ieps.frontend.restservice.UserRestService;
 import achievers.ieps.frontend.restservice.VendorRestService;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +36,6 @@ public class BerkasController {
     @GetMapping("/vendor-assessment")
     public String vendorAssessment(HttpServletRequest request, Model model) throws IOException, InterruptedException {
         var token = request.getSession().getAttribute("token").toString();
-
 
         var check = vendorRestService.checkInfo(token);
         model.addAttribute("vendorInfo", check);
@@ -135,7 +131,6 @@ public class BerkasController {
 
             return "form-va.html";
         }
-
 
         for (UploadBerkasDTO berkasDTO: uploadBerkasFormDTO.getListBerkas()) {
             var createBerkasDTO = new CreateBerkasRequestDTO();
