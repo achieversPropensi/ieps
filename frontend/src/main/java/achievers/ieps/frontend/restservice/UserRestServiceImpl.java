@@ -44,7 +44,7 @@ public class UserRestServiceImpl implements UserRestService {
     Setting setting;
     private final WebClient webClient;
 //    private final String backendUrl = "http://localhost:8080/api/";
-    private final String backendUrl = setting.USER_SERVER_URL;
+    private final String backendUrl = "https://achievers-backend.up.railway.app/api/";
     public UserRestServiceImpl(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder
                 .baseUrl(backendUrl)
