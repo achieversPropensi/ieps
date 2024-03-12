@@ -259,10 +259,10 @@ public class UserRestServiceImpl implements UserRestService {
 
     @Override
     public void updateSession(String status, String role, String email, String password, String tokenDTO, HttpServletRequest httprequest) throws IOException, InterruptedException {
-        WebClient client = WebClient.create("https://achievers-frontend.up.railway.app");
         LoginJwtRequestDTO loginDTO = new LoginJwtRequestDTO(email, password);
-        LoginJwtResponseDTO token = client.post()
-                .uri("/api/auth/token")
+        LoginJwtResponseDTO token = this.webClient
+                .post()
+                .uri("auth/token")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDTO)
                 .bodyValue(loginDTO)
                 .retrieve()
