@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import achievers.ieps.frontend.setting.Setting;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,8 +47,9 @@ public class BerkasRestServiceImpl implements BerkasRestService {
 
     @Override
     public List<KonfigurasiBerkasResponseDTO> retrieveKonfigurasi(String token) {
+        List<KonfigurasiBerkasResponseDTO> responseList = new ArrayList<>();
 
-        var response = this.mockWebClient
+        var response = this.webClient
                 .get()
                 .uri("/konfigurasi-berkas/get")
                 .header("Authorization", "Bearer " + token)
@@ -56,7 +58,10 @@ public class BerkasRestServiceImpl implements BerkasRestService {
                         <List<KonfigurasiBerkasResponseDTO>>() {})
                 .block();
 
-        return response;
+        if (response != null) {
+            responseList.addAll(response);
+        }
+        return responseList;
     };
 
     @Override
