@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -70,6 +71,12 @@ public class BerkasController {
         model.addAttribute("vendor", user);
 
         var listKonfigurasi = berkasRestService.retrieveKonfigurasi(token);
+        if (listKonfigurasi.isEmpty()) {
+            model.addAttribute("terkonfigurasi", false);
+        }
+        else {
+            model.addAttribute("terkonfigurasi", true);
+        }
         model.addAttribute("listKonfigurasi", listKonfigurasi);
 
         UploadBerkasFormDTO berkasFormDTO = new UploadBerkasFormDTO(); // Replace with your actual BerkasFormDTO instantiation
@@ -91,6 +98,7 @@ public class BerkasController {
     @PostMapping("/vendor-assessment/upload")
     public String vaSubmit(HttpServletRequest request,
                            @Valid @ModelAttribute UploadBerkasFormDTO uploadBerkasFormDTO,
+                           RedirectAttributes redirectAttributes,
                            BindingResult bindingResult, Model model)
             throws IOException, InterruptedException, JSONException {
 
@@ -166,6 +174,7 @@ public class BerkasController {
             }
         }
         var submissionChange = vendorRestService.toggleSubmission(token);
+        redirectAttributes.addFlashAttribute("successMessage", "Berkas Anda berhasil disimpan.");
         return "redirect:/vendor-assessment";
     }
 
@@ -210,7 +219,8 @@ public class BerkasController {
     @PostMapping("/vendor-assessment/update")
     public String vaEditSubmit(HttpServletRequest request,
                            @Valid @ModelAttribute UpdateBerkasFormDTO updateBerkasFormDTO,
-                           BindingResult bindingResult, Model model)
+                               RedirectAttributes redirectAttributes,
+                               BindingResult bindingResult, Model model)
             throws IOException, InterruptedException {
 
         var token = request.getSession().getAttribute("token").toString();
@@ -287,6 +297,7 @@ public class BerkasController {
             }
         }
         var submissionChange = vendorRestService.toggleSubmission(token);
+        redirectAttributes.addFlashAttribute("successMessage", "Berkas Anda berhasil disimpan.");
         return "redirect:/vendor-assessment";
     }
 

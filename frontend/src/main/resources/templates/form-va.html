@@ -60,40 +60,46 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Edit Berkas</h5>
-                        <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
-                        <form th:action="@{/vendor-assessment/upload}" enctype="multipart/form-data"
-                              th:object="${berkasFormDTO}" method="POST" id="vendorAssessmentForm">
-                            <table class="table">
-                                <thead>
-                                <tr style="text-align: center">
-                                    <th>No</th>
-                                    <th>Nama Berkas</th>
-                                    <th>Deskripsi Berkas</th>
-                                    <th>Unggah Berkas</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="konfigurasi, iterationStatus : ${listKonfigurasi}">
-                                    <td th:text="${iterationStatus.count}"></td>
-                                    <td th:text="${konfigurasi.namaBerkas}"></td>
-                                    <td th:text="${konfigurasi.deskripsi}"></td>
-                                    <td>
-                                        <input type="file" th:field="*{listBerkas[__${iterationStatus.index}__].file}"
-                                               class="form-control" accept=".pdf" required />
-                                        <input type="hidden" class="form-control"
-                                               th:field="*{listBerkas[__${iterationStatus.index}__].nama}"/>
-                                        <input type="hidden" class="form-control"
-                                               th:field="*{listBerkas[__${iterationStatus.index}__].deskripsi}"/>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <p> Notes: Berkas yang diunggah harus dalam bentuk PDF dengan ukuran maksimal 5MB</p>
-                            <div class="text-center m-3">
-                                <button type="button" id="showModalBtn" class="btn btn-dark">Unggah</button>
-                            </div>
-                            <br>
-                        </form>
+                        <div th:if="${terkonfigurasi}">
+                            <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+                            <form th:action="@{/vendor-assessment/upload}" enctype="multipart/form-data"
+                                  th:object="${berkasFormDTO}" method="POST" id="vendorAssessmentForm">
+                                <table class="table">
+                                    <thead>
+                                    <tr style="text-align: center">
+                                        <th>No</th>
+                                        <th>Nama Berkas</th>
+                                        <th>Deskripsi Berkas</th>
+                                        <th>Unggah Berkas</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="konfigurasi, iterationStatus : ${listKonfigurasi}">
+                                        <td th:text="${iterationStatus.count}"></td>
+                                        <td th:text="${konfigurasi.namaBerkas}"></td>
+                                        <td th:text="${konfigurasi.deskripsi}"></td>
+                                        <td>
+                                            <input type="file" th:field="*{listBerkas[__${iterationStatus.index}__].file}"
+                                                   class="form-control" accept=".pdf" required />
+                                            <input type="hidden" class="form-control"
+                                                   th:field="*{listBerkas[__${iterationStatus.index}__].nama}"/>
+                                            <input type="hidden" class="form-control"
+                                                   th:field="*{listBerkas[__${iterationStatus.index}__].deskripsi}"/>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <p> Notes: Berkas yang diunggah harus dalam bentuk PDF dengan ukuran maksimal 5MB</p>
+                                <div class="text-center m-3">
+                                    <button type="button" id="showModalBtn" class="btn btn-dark">Unggah</button>
+                                </div>
+                                <br>
+                            </form>
+                        </div>
+                        <div th:if="${not terkonfigurasi}">
+                            <p>Daftar berkas yang perlu diunggah dalam Vendor Assessment ini belum dikonfigurasi oleh pihak PT Truba Jaga Cita.
+                                Mohon tunggu beberapa saat lagi.</p>
+                        </div>
                     </div>
                     <div class="modal" id="confirmationModal" tabindex="-1">
                         <div class="modal-dialog">
