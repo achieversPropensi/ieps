@@ -24,7 +24,7 @@ public class KonfigurasiBerkasRestServiceImpl implements KonfigurasiBerkasRestSe
 
     private final List lst = new ArrayList<>();
     private final WebClient webClient;
-    private final String backendUrl = setting.USER_SERVER_URL + "/konfigurasi-berkas";
+    private final String backendUrl = "https://achievers-backend.up.railway.app/api/" + "konfigurasi-berkas";
 
     public KonfigurasiBerkasRestServiceImpl(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder
