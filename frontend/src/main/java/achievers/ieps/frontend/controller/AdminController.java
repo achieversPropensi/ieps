@@ -4,6 +4,7 @@ import achievers.ieps.frontend.dto.request.AdminCreateUserRequestDTO;
 import achievers.ieps.frontend.dto.request.AdminUpdateUserRequestDTO;
 import achievers.ieps.frontend.dto.request.UserModelRequestDTO;
 import achievers.ieps.frontend.dto.request.VendorRequestDTO;
+import achievers.ieps.frontend.dto.response.LoginJwtResponseDTO;
 import achievers.ieps.frontend.dto.response.ResponseAPI;
 import achievers.ieps.frontend.dto.response.admin.AdminReadUserResponseDTO;
 import achievers.ieps.frontend.dto.response.admin.AdminReadUserUpdateResponseDTO;
@@ -11,6 +12,7 @@ import achievers.ieps.frontend.dto.response.admin.VendorReadUserResponseDTO;
 import achievers.ieps.frontend.restservice.UserRestService;
 import achievers.ieps.frontend.setting.Setting;
 import jakarta.servlet.http.HttpServletRequest;
+import org.json.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -38,7 +40,7 @@ public class AdminController {
 
     // View All User
     @GetMapping("admin/view-user")
-    public String viewAllUser(Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+    public String viewAllUser(Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) throws IOException, InterruptedException {
         String getAllUserModelApiUrl = "http://localhost:8080/api/admin/view-all";
 //        String getAllUserModelApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/view-all";
 
@@ -59,6 +61,12 @@ public class AdminController {
 
         // Check if the response is successful and contains users
         if (listUserModelResponse.getBody() != null && listUserModelResponse.getBody().getStatus() == 200) {
+
+            LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+            tokenObj.setToken(token);
+            var userNav = userRestService.viewProfile(tokenObj);
+            model.addAttribute("userNav", userNav);
+
             model.addAttribute("users", listUserModelResponse.getBody().getResult());
         } else {
             // Handle jika request gagal, atau response tidak berisi Users
@@ -71,7 +79,7 @@ public class AdminController {
 
     // View User By Id
     @GetMapping("admin/view-user-proc-admin/{id}")
-    public String viewUserProcAdmin(@PathVariable("id") UUID id, Model model, RedirectAttributes redirectAttributes) {
+    public String viewUserProcAdmin(@PathVariable("id") UUID id, Model model, RedirectAttributes redirectAttributes,  HttpServletRequest request) throws IOException, InterruptedException {
 
         String getUserModelApiUrl = "http://localhost:8080/api/admin/profile-proc-admin/" + id;
 //        String getUserModelApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-proc-admin/" + id;
@@ -79,6 +87,11 @@ public class AdminController {
         System.out.println("MASUK GETMAPPING");
 
         RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var token = request.getSession().getAttribute("token").toString();
+        headers.set("Authorization", "Bearer " + token);
 
         // Mendapat informasi detail profil user
         ResponseEntity<ResponseAPI<UserModelRequestDTO>> userModelResponse = restTemplate.exchange(
@@ -91,6 +104,11 @@ public class AdminController {
         System.out.println(userModelResponse.getBody().getResult().getNomorTelefon());
         if (userModelResponse.getBody() != null && userModelResponse.getBody().getStatus() == 200) {
             UserModelRequestDTO user = userModelResponse.getBody().getResult();
+
+            LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+            tokenObj.setToken(token);
+            var userNav = userRestService.viewProfile(tokenObj);
+            model.addAttribute("userNav", userNav);
 
             if(user.getRole().equals("Procurement Staff") || user.getRole().equals("Procurement Manager")){
                 model.addAttribute("user", userModelResponse.getBody().getResult());
@@ -109,11 +127,16 @@ public class AdminController {
     }
 
     @GetMapping("admin/view-user-vendor/{id}")
-    public String viewUserVendor(@PathVariable("id") UUID id, Model model, RedirectAttributes redirectAttributes) {
+    public String viewUserVendor(@PathVariable("id") UUID id, Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) throws IOException, InterruptedException {
         String getVendorApiUrl = "http://localhost:8080/api/admin/profile-vendor/" + id;
 //        String getVendorApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-vendor/" + id;
 
         RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var token = request.getSession().getAttribute("token").toString();
+        headers.set("Authorization", "Bearer " + token);
 
         // Mendapat informasi detail profil user
         ResponseEntity<ResponseAPI<VendorRequestDTO>> vendorResponse = restTemplate.exchange(
@@ -124,6 +147,11 @@ public class AdminController {
                 });
         if (vendorResponse.getBody() != null && vendorResponse.getBody().getStatus() == 200) {
             System.out.println("BERHASIL");
+
+            LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+            tokenObj.setToken(token);
+            var userNav = userRestService.viewProfile(tokenObj);
+            model.addAttribute("userNav", userNav);
 
             model.addAttribute("user", vendorResponse.getBody().getResult());
             return "admin/view-vendor";
@@ -139,8 +167,19 @@ public class AdminController {
 
     // Tambah Pengguna
     @GetMapping("admin/add-user")
-    public String addUserPage(Model model, RedirectAttributes redirectAttributes) {
+    public String addUserPage(Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) throws IOException, InterruptedException {
         AdminCreateUserRequestDTO newUserRequest = new AdminCreateUserRequestDTO();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var token = request.getSession().getAttribute("token").toString();
+        headers.set("Authorization", "Bearer " + token);
+
+        LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+        tokenObj.setToken(token);
+        var userNav = userRestService.viewProfile(tokenObj);
+        model.addAttribute("userNav", userNav);
+
         model.addAttribute("userDTO",newUserRequest);
         return "admin/add-user";
     }
@@ -173,6 +212,11 @@ public class AdminController {
                     });
 
             if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
+                LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+                tokenObj.setToken(token);
+                var userNav = userRestService.viewProfile(tokenObj);
+                model.addAttribute("userNav", userNav);
+
                 redirectAttributes.addFlashAttribute("success", "New user added successfully");
                 return "redirect:/admin/view-user?success=User baru berhasil tersimpan";
             } else if (response.getBody().getMessage().equals("Email sudah terdaftar")) {
@@ -194,7 +238,7 @@ public class AdminController {
     }
 
     @GetMapping("/admin/{id}/delete-user")
-    public String deleteUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+    public String deleteUser(@PathVariable("id") UUID id, RedirectAttributes redirectAttributes, HttpServletRequest request, Model model) {
         // TODO: Auth
 
         try {
@@ -202,6 +246,10 @@ public class AdminController {
             HttpEntity<String> entity = new HttpEntity<>(headers);
             headers.setContentType(MediaType.APPLICATION_JSON);
             RestTemplate restTemplate = new RestTemplate();
+
+            var token = request.getSession().getAttribute("token").toString();
+            headers.set("Authorization", "Bearer " + token);
+
 
             String deleteUserUrl = "http://localhost:8080/api/admin/delete-user/" + id;
 //            String deleteUserUrl = "https://achievers-backend.up.railway.app/api/admin" + "/delete-user/" + id;
@@ -215,6 +263,12 @@ public class AdminController {
                     });
 
             if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
+
+                LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+                tokenObj.setToken(token);
+                var userNav = userRestService.viewProfile(tokenObj);
+                model.addAttribute("userNav", userNav);
+
                 redirectAttributes.addFlashAttribute("success", "User deleted successfully");
                 return "redirect:/admin/view-user?success=User berhasil dihapus";
             } else {
@@ -229,11 +283,15 @@ public class AdminController {
 
     // Update User proc - admin
     @GetMapping("/admin/{id}/update-user-proc-admin")
-    public String updateUserPage(@PathVariable("id") UUID id, Model model) {
+    public String updateUserPage(@PathVariable("id") UUID id, Model model, HttpServletRequest request) throws IOException, InterruptedException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        var token = request.getSession().getAttribute("token").toString();
+        headers.set("Authorization", "Bearer " + token);
+
 
         String getUserApiUrl = "http://localhost:8080/api/admin/profile-proc-admin/" + id;
 //        String getUserApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-proc-admin/" + id;
@@ -247,6 +305,11 @@ public class AdminController {
                 });
 
         if (userResponse.getBody() != null && userResponse.getBody().getStatus().equals(200)) {
+
+            LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+            tokenObj.setToken(token);
+            var userNav = userRestService.viewProfile(tokenObj);
+            model.addAttribute("userNav", userNav);
 
             model.addAttribute("user", userResponse.getBody().getResult());
             AdminUpdateUserRequestDTO newUserRequest = new AdminUpdateUserRequestDTO();
@@ -262,8 +325,8 @@ public class AdminController {
     public String updateUser(
             @ModelAttribute AdminUpdateUserRequestDTO userDTO,
             RedirectAttributes redirectAttributes,
-            HttpServletRequest request
-    ) throws IOException {
+            HttpServletRequest request, Model model
+    ) throws IOException, InterruptedException {
 
         // TODO: AUTH
 
@@ -288,6 +351,12 @@ public class AdminController {
                 });
 
         if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
+
+            LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+            tokenObj.setToken(token);
+            var userNav = userRestService.viewProfile(tokenObj);
+            model.addAttribute("userNav", userNav);
+
             redirectAttributes.addFlashAttribute("success", "User updated successfully");
             return  "redirect:/admin/view-user?success=User berhasil diperbarui";
         } else if (response.getBody().getMessage().equals("Email sudah terdaftar")){
@@ -303,11 +372,15 @@ public class AdminController {
 
     // Update User vendor
     @GetMapping("/admin/{id}/update-user-vendor")
-    public String updateVendorPage(@PathVariable("id") UUID id, Model model) {
+    public String updateVendorPage(@PathVariable("id") UUID id, Model model, HttpServletRequest request) throws IOException, InterruptedException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        var token = request.getSession().getAttribute("token").toString();
+        headers.set("Authorization", "Bearer " + token);
+
 
         String getUserApiUrl = "http://localhost:8080/api/admin/profile-vendor/" + id;
 //        String getUserApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-vendor/" + id;
@@ -323,6 +396,11 @@ public class AdminController {
         if (userResponse.getBody() != null && userResponse.getBody().getStatus().equals(200)) {
             System.out.println(userResponse.getBody().getResult().getStatus());
 
+            LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+            tokenObj.setToken(token);
+            var userNav = userRestService.viewProfile(tokenObj);
+            model.addAttribute("userNav", userNav);
+
             model.addAttribute("user", userResponse.getBody().getResult());
             VendorRequestDTO newUserRequest = new VendorRequestDTO();
             model.addAttribute("userDTO",newUserRequest);
@@ -337,8 +415,8 @@ public class AdminController {
     public String updateVendor(
             @ModelAttribute VendorRequestDTO userDTO,
             RedirectAttributes redirectAttributes,
-            HttpServletRequest request
-    ) throws IOException {
+            HttpServletRequest request, Model model
+    ) throws IOException, InterruptedException {
 
         // TODO: AUTH
 
@@ -362,6 +440,11 @@ public class AdminController {
                 });
 
         if (response.getBody() != null && response.getBody().getStatus().equals(200)) {
+            LoginJwtResponseDTO tokenObj = new LoginJwtResponseDTO();
+            tokenObj.setToken(token);
+            var userNav = userRestService.viewProfile(tokenObj);
+            model.addAttribute("userNav", userNav);
+
             redirectAttributes.addFlashAttribute("success", "User updated successfully");
             return  "redirect:/admin/view-user?success=User berhasil diperbarui";
         } else if (response.getBody().getMessage().equals("Email sudah terdaftar")){

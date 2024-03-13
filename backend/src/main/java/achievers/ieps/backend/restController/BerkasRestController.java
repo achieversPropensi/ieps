@@ -1,4 +1,4 @@
-package achievers.ieps.backend.restcontroller;
+package achievers.ieps.backend.restController;
 
 import achievers.ieps.backend.dto.request.CreateBerkasRequestDTO;
 import achievers.ieps.backend.dto.request.UpdateBerkasRequestDTO;

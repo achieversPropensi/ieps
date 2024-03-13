@@ -1,4 +1,4 @@
-package achievers.ieps.backend.restcontroller;
+package achievers.ieps.backend.restController;
 
 import java.util.ArrayList;
 import java.util.List;

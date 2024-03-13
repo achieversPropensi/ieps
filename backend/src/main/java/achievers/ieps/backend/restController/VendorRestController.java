@@ -1,4 +1,4 @@
-package achievers.ieps.backend.restcontroller;
+package achievers.ieps.backend.restController;
 
 import achievers.ieps.backend.dto.response.LoginJwtResponseDTO;
 import achievers.ieps.backend.dto.response.VendorInfoResponseDTO;

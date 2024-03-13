@@ -1,4 +1,4 @@
-package achievers.ieps.backend.restcontroller;
+package achievers.ieps.backend.restController;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

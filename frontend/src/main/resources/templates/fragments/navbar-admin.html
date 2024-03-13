@@ -14,7 +14,7 @@
 
 </head>
 <body>
-<nav th:fragment="navbar(activeTab)" class="sidebar">
+<nav th:fragment="navbar(activeTab)" th:if="${userNav.role == 'Admin'}" class="sidebar">
   <div class="menu_content">
     <ul class="menu_items">
 
@@ -73,7 +73,7 @@
                id="admin-avatar">
           <div id="profil-content">
             <a href="/profile/view">
-            <span id="name">Rakan Fasya</span>
+            <span id="name" th:text="${userNav.nama}" ></span>
             <span id="role">Admin</span>
             </a>
           </div>
