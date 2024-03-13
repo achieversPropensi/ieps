@@ -145,6 +145,11 @@ public class UserController {
             model.addAttribute("vendorDTO", new CreateVendorRequestDTO());
             return "form-register.html";
         }
+        if (vendorDTO.getPassword().isEmpty() || vendorDTO.getEmail().isEmpty() || vendorDTO.getAlamat().isEmpty() || vendorDTO.getNama().isEmpty() || vendorDTO.getNomorTelefon().isEmpty() || vendorDTO.getNamaPerusahaan().isEmpty()){
+            model.addAttribute("error", "Harap semua field untuk diisi");
+            model.addAttribute("vendorDTO", new CreateVendorRequestDTO());
+            return "form-register.html";
+        }
         var output = userRestService.registerVendor(vendorDTO);
         if (output.isEmpty()) {
             model.addAttribute("error", "Maaf, pengguna dengan email ini sudah tercatat dalam sistem");
