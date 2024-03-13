@@ -68,61 +68,32 @@
                             </div>
 
                             <h5 class="card-title">Daftar Berkas</h5>
-
+                            <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
                             <table class="table">
                                 <thead>
-                                    <tr>
-                                        <th>Nomor</th>
-                                        <th>Nama Berkas</th>
-                                        <th>Deskripsi Berkas</th>
-                                        <th>Berkas</th>
-                                    </tr>
+                                <tr>
+                                    <th>Nomor</th>
+                                    <th>Nama Berkas</th>
+                                    <th>Deskripsi Berkas</th>
+                                    <th>Berkas</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Iterasi melalui daftar berkas -->
-                                    <tr th:each="berkas, iterationStatus : ${listBerkas}">
-                                        <td th:text="${iterationStatus.count}"></td>
-                                        <td th:text="${berkas.nama}"></td>
-                                        <td th:text="${berkas.deskripsi}"></td>
-                                        <td>
-                                            <a th:href="${berkas.url}" th:text="${berkas.judul}" target="_blank"></a>
-                                        </td>
-                                    </tr>
+                                <!-- Iterasi melalui daftar berkas -->
+                                <tr th:each="berkas, iterationStatus : ${listBerkas}">
+                                    <td th:text="${iterationStatus.count}"></td>
+                                    <td th:text="${berkas.nama}"></td>
+                                    <td th:text="${berkas.deskripsi}"></td>
+                                    <td>
+                                        <a th:href="${berkas.url}" th:text="${berkas.judul}" target="_blank"></a>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
 
                             <div th:if="${vendorInfo.status == 'Gagal Terverifikasi'}" class="text-center">
                                 <a th:href="@{/vendor-assessment/edit}" class="btn btn-dark">Ubah</a>
                             </div>
-
-                        </div>
-
-                        <h5 class="card-title">Daftar Berkas</h5>
-                        <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Nomor</th>
-                                <th>Nama Berkas</th>
-                                <th>Deskripsi Berkas</th>
-                                <th>Berkas</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <!-- Iterasi melalui daftar berkas -->
-                            <tr th:each="berkas, iterationStatus : ${listBerkas}">
-                                <td th:text="${iterationStatus.count}"></td>
-                                <td th:text="${berkas.nama}"></td>
-                                <td th:text="${berkas.deskripsi}"></td>
-                                <td>
-                                    <a th:href="${berkas.url}" th:text="${berkas.judul}" target="_blank"></a>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-
-                        <div th:if="${vendorInfo.status == 'Gagal Terverifikasi'}" class="text-center">
-                            <a th:href="@{/vendor-assessment/edit}" class="btn btn-dark">Ubah</a>
                         </div>
                     </div>
                 </div>
