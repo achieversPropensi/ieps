@@ -20,13 +20,13 @@ import java.util.Map;
 @Service
 @Transactional
 public class BerkasRestServiceImpl implements BerkasRestService {
-    @Autowired
-    Setting setting;
+//    @Autowired
+//    Setting setting;
 
     private final WebClient mockWebClient;
     private final WebClient webClient;
-//    private final String backendUrl = "http://localhost:8080/api";
-    private final String backendUrl = "https://achievers-backend.up.railway.app/api/";
+    private final String backendUrl = "http://localhost:8080/api";
+//    private final String backendUrl = "https://achievers-backend.up.railway.app/api/";
     private final String mockUrl = "https://78cf56a3-7e45-4d24-a1f6-ee86bbb016a4.mock.pstmn.io/api";
 
     @Autowired

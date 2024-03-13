@@ -19,8 +19,8 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class KonfigurasiBerkasRestServiceImpl implements KonfigurasiBerkasRestService{
 
-    @Autowired
-    Setting setting;
+//    @Autowired
+//    Setting setting;
 
     private final List lst = new ArrayList<>();
     private final WebClient webClient;

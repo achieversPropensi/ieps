@@ -122,6 +122,9 @@ public class AdminServiceImpl implements AdminService {
         String role = adminCreateUserRequestDTO.getRole();
         String password = userService.encrypt(adminCreateUserRequestDTO.getPassword());
 
+        System.out.println("PASSWORD");
+        System.out.println(password);
+
         if (role.equals("Admin")) {
             Admin admin = new Admin();
 

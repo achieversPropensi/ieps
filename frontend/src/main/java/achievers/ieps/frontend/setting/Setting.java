@@ -8,6 +8,6 @@ public class Setting {
     @Value("${achievers.admin.url}")
     public String ADMIN_SERVER_URL;
 
-    @Value("${achievers.user.url}")
-    public String USER_SERVER_URL;
+//    @Value("${achievers.user.url}")
+//    public String USER_SERVER_URL;
 }

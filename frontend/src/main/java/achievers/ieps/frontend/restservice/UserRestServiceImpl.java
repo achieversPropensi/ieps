@@ -40,11 +40,11 @@ import java.util.UUID;
 @Service
 @Transactional
 public class UserRestServiceImpl implements UserRestService {
-    @Autowired
-    Setting setting;
+//    @Autowired
+//    Setting setting;
     private final WebClient webClient;
-//    private final String backendUrl = "http://localhost:8080/api/";
-    private final String backendUrl = "https://achievers-backend.up.railway.app/api/";
+    private final String backendUrl = "http://localhost:8080/api/";
+//    private final String backendUrl = "https://achievers-backend.up.railway.app/api/";
     public UserRestServiceImpl(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder
                 .baseUrl(backendUrl)

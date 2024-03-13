@@ -15,12 +15,12 @@ import java.util.Map;
 @Service
 @Transactional
 public class VendorRestServiceImpl implements VendorRestService {
-    @Autowired
-    Setting setting;
+//    @Autowired
+//    Setting setting;
 
     private final WebClient webClient;
-//    private final String backendUrl = "http://localhost:8080/api";
-    private final String backendUrl = "https://achievers-backend.up.railway.app/api/";
+    private final String backendUrl = "http://localhost:8080/api";
+//    private final String backendUrl = "https://achievers-backend.up.railway.app/api/";
 
     public VendorRestServiceImpl(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder

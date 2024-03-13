@@ -32,15 +32,15 @@ public class AdminController {
     @Autowired
     UserRestService userRestService;
 
-    @Autowired
-    Setting setting;
+//    @Autowired
+//    Setting setting;
 
 
     // View All User
     @GetMapping("admin/view-user")
     public String viewAllUser(Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
-//        String getAllUserModelApiUrl = "http://localhost:8080/api/admin/view-all";
-        String getAllUserModelApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/view-all";
+        String getAllUserModelApiUrl = "http://localhost:8080/api/admin/view-all";
+//        String getAllUserModelApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/view-all";
 
         // Make HTTP request to get all user
         RestTemplate restTemplate = new RestTemplate();
@@ -73,8 +73,8 @@ public class AdminController {
     @GetMapping("admin/view-user-proc-admin/{id}")
     public String viewUserProcAdmin(@PathVariable("id") UUID id, Model model, RedirectAttributes redirectAttributes) {
 
-//        String getUserModelApiUrl = "http://localhost:8080/api/admin/profile-proc-admin/" + id;
-        String getUserModelApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-proc-admin/" + id;
+        String getUserModelApiUrl = "http://localhost:8080/api/admin/profile-proc-admin/" + id;
+//        String getUserModelApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-proc-admin/" + id;
 
         System.out.println("MASUK GETMAPPING");
 
@@ -110,8 +110,8 @@ public class AdminController {
 
     @GetMapping("admin/view-user-vendor/{id}")
     public String viewUserVendor(@PathVariable("id") UUID id, Model model, RedirectAttributes redirectAttributes) {
-//        String getVendorApiUrl = "http://localhost:8080/api/admin/profile-vendor/" + id;
-        String getVendorApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-vendor/" + id;
+        String getVendorApiUrl = "http://localhost:8080/api/admin/profile-vendor/" + id;
+//        String getVendorApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-vendor/" + id;
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -150,8 +150,8 @@ public class AdminController {
                           HttpServletRequest request,
                           RedirectAttributes redirectAttributes,
                           Model model) throws IOException{
-//        String postUserUrl = "http://localhost:8080/api/admin/add-user";
-        String postUserUrl = "https://achievers-backend.up.railway.app/api/admin" + "/add-user";
+        String postUserUrl = "http://localhost:8080/api/admin/add-user";
+//        String postUserUrl = "https://achievers-backend.up.railway.app/api/admin" + "/add-user";
 
         try{
             // Create a HttpHeaders object to set the content type
@@ -203,8 +203,8 @@ public class AdminController {
             headers.setContentType(MediaType.APPLICATION_JSON);
             RestTemplate restTemplate = new RestTemplate();
 
-//            String deleteUserUrl = "http://localhost:8080/api/admin/delete-user/" + id;
-            String deleteUserUrl = "https://achievers-backend.up.railway.app/api/admin" + "/delete-user/" + id;
+            String deleteUserUrl = "http://localhost:8080/api/admin/delete-user/" + id;
+//            String deleteUserUrl = "https://achievers-backend.up.railway.app/api/admin" + "/delete-user/" + id;
 
             // Menghapus User berdasarkan ID
             ResponseEntity<ResponseAPI<String>> response = restTemplate.exchange(
@@ -235,8 +235,8 @@ public class AdminController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-//        String getUserApiUrl = "http://localhost:8080/api/admin/profile-proc-admin/" + id;
-        String getUserApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-proc-admin/" + id;
+        String getUserApiUrl = "http://localhost:8080/api/admin/profile-proc-admin/" + id;
+//        String getUserApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-proc-admin/" + id;
 
         // Mendapatkan informasi user untuk ditampilkan di form
         ResponseEntity<ResponseAPI<AdminUpdateUserRequestDTO>> userResponse = restTemplate.exchange(
@@ -276,8 +276,8 @@ public class AdminController {
         headers.set("Authorization", "Bearer " + token);
 
 
-//        String updateUserUrl = "http://localhost:8080/api/admin/update-user-admin-proc";
-        String updateUserUrl = "https://achievers-backend.up.railway.app/api/admin" + "/update-user-admin-proc";
+        String updateUserUrl = "http://localhost:8080/api/admin/update-user-admin-proc";
+//        String updateUserUrl = "https://achievers-backend.up.railway.app/api/admin" + "/update-user-admin-proc";
 
 
         ResponseEntity<ResponseAPI<AdminReadUserUpdateResponseDTO>> response = restTemplate.exchange(
@@ -309,8 +309,8 @@ public class AdminController {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-//        String getUserApiUrl = "http://localhost:8080/api/admin/profile-vendor/" + id;
-        String getUserApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-vendor/" + id;
+        String getUserApiUrl = "http://localhost:8080/api/admin/profile-vendor/" + id;
+//        String getUserApiUrl = "https://achievers-backend.up.railway.app/api/admin" + "/profile-vendor/" + id;
 
         // Mendapatkan informasi user untuk ditampilkan di form
         ResponseEntity<ResponseAPI<VendorRequestDTO>> userResponse = restTemplate.exchange(
@@ -350,8 +350,8 @@ public class AdminController {
         var token = request.getSession().getAttribute("token").toString();
         headers.set("Authorization", "Bearer " + token);
 
-//        String updateUserUrl = "http://localhost:8080/api/admin/update-user-vendor";
-        String updateUserUrl = "https://achievers-backend.up.railway.app/api/admin" + "/update-user-vendor";
+        String updateUserUrl = "http://localhost:8080/api/admin/update-user-vendor";
+//        String updateUserUrl = "https://achievers-backend.up.railway.app/api/admin" + "/update-user-vendor";
 
         System.out.println("MASUK UPDATE POST");
         ResponseEntity<ResponseAPI<VendorReadUserResponseDTO>> response = restTemplate.exchange(
