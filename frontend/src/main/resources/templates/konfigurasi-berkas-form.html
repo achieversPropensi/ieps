@@ -123,5 +123,21 @@
 <object th:insert="~{fragments/commonfauzan :: js}" th:remove="tag"></object>
 
 </body>
+<script>
+    document
+      .getElementById("showModalBtn")
+      .addEventListener("click", function () {
+        var modal = new bootstrap.Modal(
+          document.getElementById("confirmationModal")
+        );
+        modal.show();
+      });
+  
+    document
+      .getElementById("confirmSubmitBtn")
+      .addEventListener("click", function () {
+        document.getElementById("konfigurasiBerkasForm").submit();
+      });
+  </script>
 
 </html>
