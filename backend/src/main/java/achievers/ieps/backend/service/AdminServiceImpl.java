@@ -7,6 +7,7 @@ import achievers.ieps.backend.dto.response.UserModelResponseDTO;
 import achievers.ieps.backend.dto.response.VendorResponseDTOFauzan;
 import achievers.ieps.backend.model.*;
 import achievers.ieps.backend.repository.*;
+import achievers.ieps.backend.security.jwt.JwtUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private UserService userService;
 
     // Get All User
     @Override
@@ -116,6 +120,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public UserModel createUserModel(AdminCreateUserRequestDTO adminCreateUserRequestDTO) {
         String role = adminCreateUserRequestDTO.getRole();
+        String password = userService.encrypt(adminCreateUserRequestDTO.getPassword());
 
         if (role.equals("Admin")) {
             Admin admin = new Admin();
@@ -123,7 +128,7 @@ public class AdminServiceImpl implements AdminService {
             admin.setNama(adminCreateUserRequestDTO.getNama());
             admin.setEmail(adminCreateUserRequestDTO.getEmail());
             admin.setNomorTelefon(adminCreateUserRequestDTO.getNomorTelefon());
-            admin.setPassword(adminCreateUserRequestDTO.getPassword());
+            admin.setPassword(password);
             admin.setRole(roleService.getRoleByRoleName("Admin"));
             admin.setCreatedAt(LocalDateTime.now());
             admin.setUpdatedAt(LocalDateTime.now());
@@ -136,7 +141,7 @@ public class AdminServiceImpl implements AdminService {
             procManager.setNama(adminCreateUserRequestDTO.getNama());
             procManager.setEmail(adminCreateUserRequestDTO.getEmail());
             procManager.setNomorTelefon(adminCreateUserRequestDTO.getNomorTelefon());
-            procManager.setPassword(adminCreateUserRequestDTO.getPassword());
+            procManager.setPassword(password);
             procManager.setRole(roleService.getRoleByRoleName("Procurement Manager"));
             procManager.setCreatedAt(LocalDateTime.now());
             procManager.setUpdatedAt(LocalDateTime.now());
@@ -150,7 +155,7 @@ public class AdminServiceImpl implements AdminService {
             procStaff.setNama(adminCreateUserRequestDTO.getNama());
             procStaff.setEmail(adminCreateUserRequestDTO.getEmail());
             procStaff.setNomorTelefon(adminCreateUserRequestDTO.getNomorTelefon());
-            procStaff.setPassword(adminCreateUserRequestDTO.getPassword());
+            procStaff.setPassword(password);
             procStaff.setRole(roleService.getRoleByRoleName("Procurement Staff"));
             procStaff.setCreatedAt(LocalDateTime.now());
             procStaff.setUpdatedAt(LocalDateTime.now());
