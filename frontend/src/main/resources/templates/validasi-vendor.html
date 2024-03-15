@@ -20,7 +20,7 @@
 <body>
 
     <main id="main" class="main">
-        <nav th:if="${user.role == 'Admin'}" th:replace="~{fragments/navbar-admin :: navbar(activeTab)}"></nav>
+<!--        <nav th:if="${user.role == 'Admin'}" th:replace="~{fragments/navbar-admin :: navbar(activeTab)}"></nav>-->
         <nav th:if="${user.role == 'Procurement Manager'}" th:replace="~{fragments/navbar-procm :: navbar(activeTab)}"></nav>
         <nav th:if="${user.role == 'Procurement Staff'}" th:replace="~{fragments/navbar-procs :: navbar(activeTab)}"></nav>
         
