@@ -7,5 +7,3 @@
 * **Muhammad Fauzan Rizky Ramadhan** - *2106654315*
 * **Qistina Muharrifa** - *2106708210*
 * **Rakan Fasya Athhar Rayyan** - *2106750950*
-
-.
